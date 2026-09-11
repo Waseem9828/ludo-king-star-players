@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import Wallet from "../models/Wallet.js";
 import Transaction, { TRANSACTION_TYPE, WALLET_BUCKET } from "../models/Transaction.js";
+import { notifyUser } from "../config/socket.js";
 
 // Which wallet bucket a credit of this transaction type lands in. Deductions
 // don't use this — see spendFromWallet, which draws across all three buckets.
@@ -94,6 +95,7 @@ export async function creditCoins(userId, amount, { type, match = null, note = "
       ],
       options
     );
+    notifyUser(userId.toString(), "wallet:updated", wallet);
   } catch (err) {
     if (err?.code === 11000 && reference) {
       // Idempotency conflict — already credited by parallel request
@@ -184,6 +186,8 @@ export async function deductCoins(userId, amount, { type, match = null, note = "
     note,
   });
 
+  notifyUser(userId.toString(), "wallet:updated", wallet);
+
   return wallet;
 }
 
@@ -222,6 +226,8 @@ export async function debitWinningCoins(userId, amount, { type, note = "" }) {
     balanceAfter: totalOf(wallet),
     note,
   });
+
+  notifyUser(userId.toString(), "wallet:updated", wallet);
 
   return wallet;
 }

@@ -4,6 +4,8 @@ import { fetchCurrentUser, sendLoginOtp, verifyLoginOtp, sendRegisterOtp, verify
 import { getWallet } from "../lib/walletApi.js";
 import { updateProfile as updateProfileRequest } from "../lib/usersApi.js";
 import { getUnreadNotificationCount } from "../lib/notificationApi.js";
+import { getSocket, subscribeUserRoom } from "../lib/socketClient.js";
+import toast from "react-hot-toast";
 
 const AuthContext = createContext(null);
 const TOKEN_STORAGE_KEY = "mpc_token";
@@ -89,6 +91,39 @@ export function AuthProvider({ children }) {
       window.removeEventListener("focus", handleFocus);
     };
   }, [token, refreshWallet, refreshUnreadNotifications]);
+
+  // Real-Time Socket.io event listeners for immediate wallet balance & notification updates
+  useEffect(() => {
+    const userId = user?.id || user?._id;
+    if (!userId) return;
+
+    const socket = getSocket();
+    subscribeUserRoom(userId);
+
+    const handleWalletUpdate = (newWallet) => {
+      if (newWallet) {
+        setWallet(newWallet);
+        window.dispatchEvent(new CustomEvent("app:refresh"));
+      } else if (token) {
+        refreshWallet(token);
+      }
+    };
+
+    const handleNotification = (notif) => {
+      if (token) refreshUnreadNotifications(token);
+      if (notif?.title && notif?.message) {
+        toast.success(notif.message);
+      }
+    };
+
+    socket.on("wallet:updated", handleWalletUpdate);
+    socket.on("notification:received", handleNotification);
+
+    return () => {
+      socket.off("wallet:updated", handleWalletUpdate);
+      socket.off("notification:received", handleNotification);
+    };
+  }, [user, token, refreshWallet, refreshUnreadNotifications]);
 
   const applySession = (rawToken, sessionUser) => {
     localStorage.setItem(TOKEN_STORAGE_KEY, rawToken);

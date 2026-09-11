@@ -128,6 +128,9 @@ export async function cleanupExpiredWaitingMatches() {
           message: "Your battle was automatically cancelled because no opponent joined within 3 minutes. Coins refunded.",
           match: cancelledMatch._id,
         });
+
+        notifyLobby("match:cancelled", { matchId: cancelledMatch._id });
+        notifyMatch(cancelledMatch._id, "match:cancelled", cancelledMatch);
       }
     }
   } catch (err) {
@@ -528,6 +531,9 @@ router.post("/:id/cancel", requireAuth, asyncHandler(async (req, res) => {
     });
   }
 
+  notifyLobby("match:cancelled", { matchId: cancelledMatch._id });
+  notifyMatch(cancelledMatch._id, "match:cancelled", cancelledMatch);
+
   res.json(cancelledMatch);
 }));
 
@@ -656,6 +662,9 @@ router.post("/:id/result-proof", requireAuth, requireFields("claimedResult"), as
       match: updatedMatch._id,
     });
   }
+
+  notifyMatch(updatedMatch._id, "match:updated", updatedMatch);
+  notifyLobby("match:updated", updatedMatch);
 
   res.status(201).json(updatedMatch);
 }));

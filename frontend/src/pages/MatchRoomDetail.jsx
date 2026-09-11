@@ -6,6 +6,7 @@ import { getMatch, submitResultProof, acceptOpponent, shareRoomCode, cancelBattl
 import { MATCH_STATUS_META } from "../lib/matchStatus.js";
 import { friendlyError } from "../lib/errors.js";
 import { UserIcon, PencilIcon, BackIcon } from "../components/Icons.jsx";
+import { getSocket, subscribeMatchRoom, leaveMatchRoom } from "../lib/socketClient.js";
 import Loading from "../components/Loading.jsx";
 import Modal from "../components/Modal.jsx";
 import toast from "react-hot-toast";
@@ -99,6 +100,28 @@ export default function MatchRoomDetail() {
     const timer = setInterval(() => setNowTs(Date.now()), 1000);
     return () => clearInterval(timer);
   }, []);
+
+  // Real-time Socket.io match room synchronization
+  useEffect(() => {
+    if (!id) return;
+    const socket = getSocket();
+    subscribeMatchRoom(id);
+
+    const handleMatchEvent = () => {
+      mutate(`/matches/${id}`);
+    };
+
+    socket.on("match:updated", handleMatchEvent);
+    socket.on("match:joined", handleMatchEvent);
+    socket.on("match:cancelled", handleMatchEvent);
+
+    return () => {
+      leaveMatchRoom(id);
+      socket.off("match:updated", handleMatchEvent);
+      socket.off("match:joined", handleMatchEvent);
+      socket.off("match:cancelled", handleMatchEvent);
+    };
+  }, [id]);
 
   const { data: match, error: matchError } = useSWR(`/matches/${id}`, {
     refreshInterval: (matchData) => {

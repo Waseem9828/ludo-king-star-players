@@ -11,6 +11,7 @@ import { createBattle, joinBattle, cancelBattle, acceptOpponent, listMyBattles, 
 import { MATCH_STATUS_META } from "../lib/matchStatus.js";
 import { friendlyError } from "../lib/errors.js";
 import { apiRequest } from "../lib/apiClient.js";
+import { getSocket, subscribeLobbyRoom } from "../lib/socketClient.js";
 import toast from "react-hot-toast";
 import useSWR, { mutate } from "swr";
 import "./MatchRoom.css";
@@ -56,6 +57,30 @@ export default function MatchRoom() {
         }
       })
       .catch(() => {});
+  }, []);
+
+  // Real-Time Socket.io lobby synchronization
+  useEffect(() => {
+    const socket = getSocket();
+    subscribeLobbyRoom();
+
+    const handleLobbyUpdate = () => {
+      mutate('/matches/open');
+      mutate('/matches/running');
+      mutate('/matches/mine');
+    };
+
+    socket.on("match:created", handleLobbyUpdate);
+    socket.on("match:joined", handleLobbyUpdate);
+    socket.on("match:updated", handleLobbyUpdate);
+    socket.on("match:cancelled", handleLobbyUpdate);
+
+    return () => {
+      socket.off("match:created", handleLobbyUpdate);
+      socket.off("match:joined", handleLobbyUpdate);
+      socket.off("match:updated", handleLobbyUpdate);
+      socket.off("match:cancelled", handleLobbyUpdate);
+    };
   }, []);
 
   const { data: fetchedBattles, error: battlesError } = useSWR('/matches/open', { refreshInterval: 3500, revalidateOnFocus: true });
