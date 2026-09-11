@@ -4,6 +4,7 @@ export const OTP_PURPOSE = Object.freeze({
   REGISTER: "register",
   LOGIN: "login",
   AUTH: "auth",
+  ADMIN_LOGIN: "admin_login",
 });
 
 // One active OTP per (phone, purpose) — sending a new one replaces it

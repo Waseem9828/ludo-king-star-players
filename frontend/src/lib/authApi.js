@@ -42,6 +42,20 @@ export function verifyRegisterOtp({ phone, otp }) {
   });
 }
 
+export function sendAdminOtp({ phone }) {
+  return apiRequest("/auth/admin/send-otp", {
+    method: "POST",
+    body: JSON.stringify({ phone }),
+  });
+}
+
+export function verifyAdminOtp({ phone, otp }) {
+  return apiRequest("/auth/admin/verify-otp", {
+    method: "POST",
+    body: JSON.stringify({ phone, otp }),
+  });
+}
+
 export function fetchCurrentUser(token) {
   return apiRequest("/auth/me", {
     headers: token ? { Authorization: `Bearer ${token}` } : {},

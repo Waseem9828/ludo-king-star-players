@@ -49,6 +49,7 @@ const AdminLogs = lazy(() => import("./pages/admin/AdminLogs.jsx"));
 const AdminDigitalManagement = lazy(() => import("./pages/admin/AdminDigitalManagement.jsx"));
 const AdminReferrals = lazy(() => import("./pages/admin/AdminReferrals.jsx"));
 const AdminContacts = lazy(() => import("./pages/admin/AdminContacts.jsx"));
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin.jsx"));
 
 export default function App() {
   const { initializing, token } = useAuth();
@@ -104,6 +105,12 @@ export default function App() {
             <Route path="/practice/waiting/:id" element={<PracticeWaitingRoom />} />
             <Route path="/practice/game/:gameId" element={<PracticeGameRoom />} />
           </Route>
+
+          {/* SECRET OMEGA SEPARATE ADMIN LOGIN ROUTES */}
+          <Route path="/omega-admin-login" element={<AdminLogin />} />
+          <Route path="/omega-admin" element={<AdminLogin />} />
+          <Route path="/secret-omega-admin" element={<AdminLogin />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
 
           {/* ADMIN LAYOUT */}
           <Route

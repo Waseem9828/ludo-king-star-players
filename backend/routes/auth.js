@@ -341,6 +341,58 @@ router.post(
   })
 );
 
+// POST /api/auth/admin/send-otp — dedicated admin OTP generation for authorized mobile numbers only
+router.post(
+  "/admin/send-otp",
+  requireFields("phone"),
+  asyncHandler(async (req, res) => {
+    const phone = normalizePhone(req.body.phone);
+    if (!PHONE_REGEX.test(phone)) {
+      return res.status(400).json({ message: "Please enter a valid 10-digit mobile number." });
+    }
+
+    const user = await User.findOne({ phone });
+    const ADMIN_ROLES = ["admin", "owner", "master", "finance_admin"];
+
+    if (!user || !ADMIN_ROLES.includes(user.role)) {
+      return res
+        .status(403)
+        .json({ message: "Access Denied: No authorized admin account found for this mobile number." });
+    }
+    if (user.status === "disabled") {
+      return res.status(403).json({ message: "This admin account is currently disabled." });
+    }
+
+    const { expiresInSeconds } = await issueOtp(phone, OTP_PURPOSE.ADMIN_LOGIN);
+    res.json({ phone, expiresInSeconds, message: "Admin verification OTP sent to your mobile number." });
+  })
+);
+
+// POST /api/auth/admin/verify-otp — verifies admin OTP & issues administrative JWT token
+router.post(
+  "/admin/verify-otp",
+  requireFields("phone", "otp"),
+  asyncHandler(async (req, res) => {
+    const phone = normalizePhone(req.body.phone);
+    const record = await verifyOtpOrThrow(phone, OTP_PURPOSE.ADMIN_LOGIN, req.body.otp);
+
+    const user = await User.findOne({ phone });
+    const ADMIN_ROLES = ["admin", "owner", "master", "finance_admin"];
+
+    if (!user || !ADMIN_ROLES.includes(user.role)) {
+      await record.deleteOne();
+      return res.status(403).json({ message: "Access Denied: Account is not authorized for Admin Panel." });
+    }
+    if (user.status === "disabled") {
+      await record.deleteOne();
+      return res.status(403).json({ message: "This admin account is disabled." });
+    }
+
+    await record.deleteOne();
+    res.json({ token: signToken(user), user: toSafeUser(user) });
+  })
+);
+
 // GET /api/auth/me — used by the frontend to restore a session from a stored token.
 router.get(
   "/me",
