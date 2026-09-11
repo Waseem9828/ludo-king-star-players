@@ -1,5 +1,5 @@
 .referral-page {
-  padding-bottom: 1rem;
+  padding-bottom: 12px;
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
@@ -10,37 +10,41 @@
 .referral-stack {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
+  width: 100%;
 }
 
-/* Card Styling */
+/* Card Styling - Matching Account UI */
 .ref-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: #ffffff;
   border-radius: 8px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(10, 81, 225,0.02);
+  color: #212529;
 }
 
 .ref-card-header {
-  background: var(--surface-alt);
-  border-bottom: 1px solid var(--border);
-  padding: 12px 16px;
   text-align: center;
-  font-weight: 700;
-  font-size: 15px;
-  color: var(--primary-blue);
+  font-weight: 800;
+  font-size: 0.82rem;
+  padding: 6px 10px;
+  background: #f8f9fa;
+  color: #111827;
+  border-bottom: 1px solid #e5e7eb;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
 }
 
 .ref-card-body {
-  padding: 12px;
+  padding: 8px 10px;
 }
 
 /* Earnings Grid */
 .ref-earnings-grid {
   display: flex;
   align-items: center;
-  padding: 16px 0;
+  padding: 6px 0;
 }
 
 .ref-stat {
@@ -49,21 +53,24 @@
 }
 
 .ref-stat-label {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  margin-bottom: 8px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: #6c757d;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
 }
 
 .ref-stat-value {
-  font-size: 16px;
-  color: var(--text-muted);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #111827;
 }
 
 .ref-stat-divider {
   width: 1px;
-  height: 40px;
-  background: var(--border);
+  height: 30px;
+  background: #dee2e6;
 }
 
 /* Code Section */
@@ -71,131 +78,118 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 6px;
 }
 
 .ref-illustration {
-  max-width: 200px;
+  max-width: 90px;
   width: 100%;
   height: auto;
-  margin: 8px 0 16px;
+  margin: 2px 0;
 }
 
 /* Input Group */
 .ref-input-group {
   display: flex;
   width: 100%;
-  max-width: 400px;
-  background: var(--surface-alt);
+  max-width: 380px;
+  background: #f8f9fa;
   border-radius: 6px;
   overflow: hidden;
-  border: 1px solid var(--border);
+  border: 1px solid #dee2e6;
+  height: 38px;
 }
 
 .ref-input {
   flex: 1;
   background: transparent;
   border: none;
-  padding: 12px 16px;
-  font-size: 16px;
-  color: var(--text);
+  padding: 0 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #212529;
   outline: none;
 }
 
 .ref-copy-btn {
-  background: var(--primary-blue); 
-  color: white;
+  background: linear-gradient(135deg, #2e85fb 0%, #0d6efd 100%);
+  color: #ffffff;
   border: none;
   border-radius: 0;
-  padding: 0 24px;
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.ref-copy-btn:hover {
-  background: var(--primary-blue-dark);
-  color: white;
+  padding: 0 16px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: none;
 }
 
 .ref-or {
-  margin: 12px 0;
+  margin: 1px 0;
   font-weight: 800;
-  font-size: 16px;
-  color: var(--text);
+  font-size: 10px;
+  color: #6c757d;
+  text-transform: uppercase;
 }
 
 /* Actions */
 .ref-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
   width: 100%;
-  max-width: 400px;
+  max-width: 380px;
 }
 
 .ref-actions .btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 14px;
+  gap: 6px;
+  padding: 8px 12px;
   border-radius: 6px;
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 0.82rem;
+  font-weight: 800;
   border: none;
   color: white;
 }
 
 .ref-btn-wa {
-  background: #25d366; /* WhatsApp Green */
-}
-.ref-btn-wa:hover {
-  background: #1eb956;
-  color: white;
+  background: linear-gradient(135deg, #25d366 0%, #1eb956 100%);
 }
 
 .ref-btn-tg {
-  background: #0088cc; /* Telegram Blue */
-}
-.ref-btn-tg:hover {
-  background: #007bb8;
-  color: white;
+  background: linear-gradient(135deg, #0088cc 0%, #007bb8 100%);
 }
 
 .ref-btn-clip {
-  background: var(--play-yellow); /* Yellow */
-  color: var(--text);
-}
-.ref-btn-clip:hover {
-  background: var(--play-orange);
-  color: var(--text);
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
 }
 
 /* How It Works */
 .ref-how-section {
   display: flex;
   flex-direction: column;
-  gap: 1px; /* Creates the border effect with background */
-  background: var(--border);
-  padding: 0;
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  overflow: hidden;
+  gap: 4px;
 }
 
 .ref-how-box {
-  background: var(--surface);
-  padding: 16px 20px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 6px 10px;
   text-align: center;
-  font-size: 14px;
-  color: var(--text-muted);
-  line-height: 1.5;
+  font-size: 0.78rem;
+  color: #4b5563;
+  line-height: 1.35;
+  font-weight: 600;
 }
 
 .ref-how-box strong {
-  color: var(--text);
+  color: #111827;
 }
 
-/* Old Referrals List adaptation */
+/* Referrals List */
 .ref-list {
   display: flex;
   flex-direction: column;
@@ -204,8 +198,10 @@
 .ref-list-item {
   display: flex;
   justify-content: space-between;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--border);
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.82rem;
 }
 
 .ref-list-item:last-child {
@@ -213,11 +209,12 @@
 }
 
 .ref-list-name {
-  font-weight: 500;
-  color: var(--text);
+  font-weight: 700;
+  color: #111827;
 }
 
 .ref-list-meta {
-  color: var(--text-muted);
-  font-size: 13px;
+  color: #16a34a;
+  font-size: 0.78rem;
+  font-weight: 700;
 }
