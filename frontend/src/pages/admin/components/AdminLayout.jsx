@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Outlet, useNavigate } from "react-router-dom";
-import { Toaster } from "react-hot-toast";
 import { useAuth } from "../../../contexts/AuthContext.jsx";
 import { MenuIcon } from "../../../components/Icons.jsx";
 import AdminSidebar from "./AdminSidebar.jsx";
@@ -16,7 +15,6 @@ export default function AdminLayout() {
 
   return (
     <div className="admin-layout-wrapper">
-      <Toaster position="top-center" toastOptions={{ style: { background: '#ffffff', color: '#17233C', fontSize: '14px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' } }} />
       
       <header className="admin-header">
         <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
