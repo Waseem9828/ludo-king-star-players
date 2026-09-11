@@ -1,5 +1,5 @@
 .referral-page {
-  padding-bottom: 12px;
+  padding-bottom: 20px;
   width: 100% !important;
   max-width: 100% !important;
   box-sizing: border-box !important;
@@ -10,16 +10,16 @@
 .referral-stack {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   width: 100%;
 }
 
-/* Card Styling - Matching Account UI */
+/* Card Styling - Matching Account UI with spacious height */
 .ref-card {
   background: #ffffff;
-  border-radius: 8px;
+  border-radius: 10px;
   border: 1px solid #dee2e6;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
   overflow: hidden;
   color: #212529;
 }
@@ -27,8 +27,8 @@
 .ref-card-header {
   text-align: center;
   font-weight: 800;
-  font-size: 0.82rem;
-  padding: 6px 10px;
+  font-size: 0.9rem;
+  padding: 10px 14px;
   background: #f8f9fa;
   color: #111827;
   border-bottom: 1px solid #e5e7eb;
@@ -37,14 +37,14 @@
 }
 
 .ref-card-body {
-  padding: 8px 10px;
+  padding: 14px 16px;
 }
 
 /* Earnings Grid */
 .ref-earnings-grid {
   display: flex;
   align-items: center;
-  padding: 6px 0;
+  padding: 12px 0;
 }
 
 .ref-stat {
@@ -53,23 +53,23 @@
 }
 
 .ref-stat-label {
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   font-weight: 800;
   color: #6c757d;
-  margin-bottom: 2px;
+  margin-bottom: 6px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
 }
 
 .ref-stat-value {
-  font-size: 1.05rem;
-  font-weight: 800;
+  font-size: 1.15rem;
+  font-weight: 900;
   color: #111827;
 }
 
 .ref-stat-divider {
   width: 1px;
-  height: 30px;
+  height: 38px;
   background: #dee2e6;
 }
 
@@ -78,35 +78,35 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
 }
 
 .ref-illustration {
-  max-width: 90px;
+  max-width: 140px;
   width: 100%;
   height: auto;
-  margin: 2px 0;
+  margin: 8px 0;
 }
 
 /* Input Group */
 .ref-input-group {
   display: flex;
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
   background: #f8f9fa;
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
   border: 1px solid #dee2e6;
-  height: 38px;
+  height: 44px;
 }
 
 .ref-input {
   flex: 1;
   background: transparent;
   border: none;
-  padding: 0 10px;
-  font-size: 0.9rem;
-  font-weight: 700;
+  padding: 0 12px;
+  font-size: 1rem;
+  font-weight: 800;
   color: #212529;
   outline: none;
 }
@@ -116,17 +116,17 @@
   color: #ffffff;
   border: none;
   border-radius: 0;
-  padding: 0 16px;
-  font-size: 0.8rem;
+  padding: 0 20px;
+  font-size: 0.85rem;
   font-weight: 800;
   cursor: pointer;
   box-shadow: none;
 }
 
 .ref-or {
-  margin: 1px 0;
+  margin: 4px 0;
   font-weight: 800;
-  font-size: 10px;
+  font-size: 11px;
   color: #6c757d;
   text-transform: uppercase;
 }
@@ -135,19 +135,19 @@
 .ref-actions {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   width: 100%;
-  max-width: 380px;
+  max-width: 400px;
 }
 
 .ref-actions .btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border-radius: 6px;
-  font-size: 0.82rem;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 8px;
+  font-size: 0.88rem;
   font-weight: 800;
   border: none;
   color: white;
@@ -170,18 +170,18 @@
 .ref-how-section {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 
 .ref-how-box {
   background: #f8f9fa;
   border: 1px solid #dee2e6;
-  border-radius: 6px;
-  padding: 6px 10px;
+  border-radius: 8px;
+  padding: 10px 14px;
   text-align: center;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   color: #4b5563;
-  line-height: 1.35;
+  line-height: 1.45;
   font-weight: 600;
 }
 
@@ -199,9 +199,9 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 0;
+  padding: 8px 0;
   border-bottom: 1px solid #f1f5f9;
-  font-size: 0.82rem;
+  font-size: 0.85rem;
 }
 
 .ref-list-item:last-child {
@@ -215,6 +215,6 @@
 
 .ref-list-meta {
   color: #16a34a;
-  font-size: 0.78rem;
+  font-size: 0.82rem;
   font-weight: 700;
 }
