@@ -519,21 +519,29 @@ export default function Wallet() {
         <Loading label="Loading wallet..." />
       ) : (
         <div className="wallet-card-container">
-          <div className="wallet-card">
-            <div className="wallet-card-header">Deposit Chips</div>
-            <div className="wallet-card-body">
-              <div className="wallet-card-label">Chips</div>
-              <div className="wallet-card-value">{wallet ? formatCoins(wallet.depositCoins) : "0"}</div>
-              <button className="btn wallet-btn-add btn-block" onClick={() => setActiveModal("pay")}>Add</button>
+          <div className="account-ui-card">
+            <div className="account-ui-header">Deposit Chips</div>
+            <div className="account-ui-body">
+              <div className="account-ui-field" style={{ marginBottom: "8px" }}>
+                <span className="account-ui-label">Chips</span>
+                <div className="account-ui-input" style={{ fontSize: "1.1rem", fontWeight: "800", textAlign: "center" }}>
+                  {wallet ? formatCoins(wallet.depositCoins) : "0"}
+                </div>
+              </div>
+              <button className="wallet-btn-add" onClick={() => setActiveModal("pay")}>Add</button>
             </div>
           </div>
 
-          <div className="wallet-card">
-            <div className="wallet-card-header">Winning Chips</div>
-            <div className="wallet-card-body">
-              <div className="wallet-card-label">Chips</div>
-              <div className="wallet-card-value">{wallet ? formatCoins(wallet.winningCoins) : "0"}</div>
-              <button className="btn btn-primary btn-block" onClick={openWithdrawModal}>Withdraw</button>
+          <div className="account-ui-card">
+            <div className="account-ui-header">Winning Chips</div>
+            <div className="account-ui-body">
+              <div className="account-ui-field" style={{ marginBottom: "8px" }}>
+                <span className="account-ui-label">Chips</span>
+                <div className="account-ui-input" style={{ fontSize: "1.1rem", fontWeight: "800", textAlign: "center" }}>
+                  {wallet ? formatCoins(wallet.winningCoins) : "0"}
+                </div>
+              </div>
+              <button className="wallet-btn-withdraw" onClick={openWithdrawModal}>Withdraw</button>
             </div>
           </div>
         </div>

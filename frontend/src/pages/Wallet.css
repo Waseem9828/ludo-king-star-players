@@ -87,23 +87,45 @@
   background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
   color: #ffffff;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   font-weight: 800;
   padding: 8px 12px;
-  font-size: 13.5px;
-  box-shadow: 0 3px 10px rgba(22, 163, 74, 0.3);
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.25);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
   width: 100%;
 }
 
 .wallet-btn-add:hover:not(:disabled) {
   background: linear-gradient(135deg, #15803d 0%, #166534 100%);
-  box-shadow: 0 5px 14px rgba(22, 163, 74, 0.4);
   transform: translateY(-1px);
 }
 
 .wallet-btn-add:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.wallet-btn-withdraw {
+  background: linear-gradient(135deg, #2e85fb 0%, #0d6efd 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 800;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  box-shadow: 0 2px 8px rgba(13, 110, 253, 0.25);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.wallet-btn-withdraw:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1d74ed 0%, #0b5ed7 100%);
+  transform: translateY(-1px);
+}
+
+.wallet-btn-withdraw:active:not(:disabled) {
   transform: scale(0.98);
 }
 
