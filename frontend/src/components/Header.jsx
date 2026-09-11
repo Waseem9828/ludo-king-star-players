@@ -88,20 +88,6 @@ export default function Header({ onMenuClick }) {
             className="app-header__logo-img" 
           />
         </Link>
-
-        {user && ["admin", "owner", "master", "finance_admin"].includes(user.role) && (
-          <Link 
-            to="/admin" 
-            className="icon-btn app-header__menu" 
-            style={{ 
-              color: '#eab308', 
-              marginLeft: '4px',
-            }}
-            aria-label="Admin Panel"
-          >
-            <ShieldIcon size={22} />
-          </Link>
-        )}
       </div>
 
       <div className="app-header__right">

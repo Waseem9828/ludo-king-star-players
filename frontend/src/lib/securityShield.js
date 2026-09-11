@@ -1,52 +1,73 @@
 /**
- * Production Security Shield & Anti-Inspection Guard
- * Protects users from Self-XSS, malicious devtools scripts, and inspect element tampering.
+ * Enterprise Production Security Shield & Anti-Inspection Guard
+ * Prevents developer console inspection, source code extraction,
+ * clickjacking (iframe embedding), and script injection.
  */
 export function initSecurityShield() {
-  const isProduction = import.meta.env.PROD || process.env.NODE_ENV === "production";
+  if (typeof window === "undefined") return;
 
-  // 1. Prominent DevTools Self-XSS / Scam Warning
+  // 1. Anti-Clickjacking / Iframe Embedding Guard
   try {
-    console.log(
-      "%cSTOP!",
-      "color: #dc2626; font-family: system-ui, -apple-system, sans-serif; font-size: 56px; font-weight: 900; text-shadow: 2px 2px 0px black;"
-    );
-    console.log(
-      "%cThis is a browser feature intended only for developers.\nIf someone told you to copy and paste code here to get free coins or hack matches, it is a SCAM and they will STEAL your account and balance!",
-      "font-size: 16px; font-weight: bold; color: #f59e0b; padding: 6px 0;"
-    );
-    console.log(
-      "%cDo NOT paste or execute any scripts in this console.\nOfficial Website: https://ludokingadda.com",
-      "font-size: 13px; color: #9ca3af;"
-    );
-  } catch (e) {
-    // Ignore console formatting errors
+    if (window.top !== window.self) {
+      window.top.location.href = window.self.location.href;
+    }
+  } catch {
+    // Ignore cross-origin frame access restriction
   }
 
-  // 2. In production, silence noisy runtime logs to keep console clean
-  if (isProduction) {
+  // 2. Clear & Silence Console in Production
+  const isLocalHost = Boolean(
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1" ||
+    window.location.hostname.startsWith("192.168.")
+  );
+
+  if (!isLocalHost) {
     const noop = () => {};
     try {
       window.console.log = noop;
       window.console.debug = noop;
       window.console.info = noop;
-      // Keep console.error for critical crash reports if needed, or silence:
+      window.console.warn = noop;
+      window.console.error = noop;
       window.console.dir = noop;
       window.console.table = noop;
-    } catch (e) {}
+      window.console.trace = noop;
+    } catch {
+      // Ignore console override error
+    }
+
+    // Periodically wipe console buffer
+    setInterval(() => {
+      try {
+        console.clear();
+      } catch {}
+    }, 1500);
+
+    // Continuous anti-debugging loop against DevTools attached breakpoints
+    setInterval(() => {
+      const startTime = performance.now();
+      (() => {
+        const d = new Date();
+        if (performance.now() - startTime > 100) {
+          try {
+            console.clear();
+          } catch {}
+        }
+      })();
+    }, 2000);
   }
 
   // 3. Disable DevTools Keyboard Shortcuts
   window.addEventListener(
     "keydown",
     (e) => {
-      // Allow shortcuts inside input / textarea
       const targetTag = e.target?.tagName?.toLowerCase();
       if (targetTag === "input" || targetTag === "textarea") {
-        return;
+        return; // Allow typing in text fields
       }
 
-      // F12
+      // F12 key
       if (e.key === "F12" || e.keyCode === 123) {
         e.preventDefault();
         e.stopPropagation();
@@ -58,7 +79,8 @@ export function initSecurityShield() {
       // Ctrl+Shift+I / Cmd+Opt+I (Inspect)
       // Ctrl+Shift+J / Cmd+Opt+J (Console)
       // Ctrl+Shift+C / Cmd+Opt+C (Inspect Element)
-      if (isCtrlOrMeta && e.shiftKey && ["I", "J", "C", "i", "j", "c"].includes(e.key)) {
+      // Ctrl+Shift+K (Firefox DevTools)
+      if (isCtrlOrMeta && e.shiftKey && ["I", "J", "C", "K", "i", "j", "c", "k"].includes(e.key)) {
         e.preventDefault();
         e.stopPropagation();
         return false;
@@ -71,7 +93,7 @@ export function initSecurityShield() {
         return false;
       }
 
-      // Ctrl+S (Save page)
+      // Ctrl+S / Cmd+S (Save Page)
       if (isCtrlOrMeta && ["S", "s"].includes(e.key)) {
         e.preventDefault();
         e.stopPropagation();
@@ -81,15 +103,28 @@ export function initSecurityShield() {
     { capture: true }
   );
 
-  // 4. Disable Context Menu (Right Click) on non-editable elements
+  // 4. Disable Context Menu (Right Click Inspect)
   window.addEventListener(
     "contextmenu",
     (e) => {
       const targetTag = e.target?.tagName?.toLowerCase();
       if (targetTag === "input" || targetTag === "textarea" || e.target?.isContentEditable) {
-        return; // Allow paste/copy in form inputs
+        return; // Allow paste/copy inside editable input fields
       }
       e.preventDefault();
+      return false;
+    },
+    { capture: true }
+  );
+
+  // 5. Prevent Dragging Assets & Images
+  window.addEventListener(
+    "dragstart",
+    (e) => {
+      if (e.target && e.target.tagName === "IMG") {
+        e.preventDefault();
+        return false;
+      }
     },
     { capture: true }
   );
