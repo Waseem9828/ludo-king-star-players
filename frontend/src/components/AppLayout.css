@@ -70,15 +70,25 @@
   display: none !important;
 }
 
-/* Mobile specific styling: 100% full screen for mobile phones */
+/* Mobile specific styling: 100% full screen for mobile phones, fixed non-slidable container */
 @media (max-width: 768px) {
+  html, body, #root {
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
   .desktop-layout {
     background: #ffffff;
+    overflow-x: hidden !important;
+    width: 100% !important;
+    max-width: 100vw !important;
   }
   
   .mobile-app-container {
-    max-width: 100%;
-    width: 100%;
+    max-width: 100% !important;
+    width: 100% !important;
+    overflow-x: hidden !important;
     box-shadow: none;
     border-radius: 0;
   }

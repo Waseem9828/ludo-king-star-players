@@ -12,6 +12,33 @@
   position: relative;
   overflow: hidden;
   min-height: 64px;
+  animation: cardSlideInRight 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.battle-card-metal.exiting {
+  animation: cardSlideOutRight 0.32s ease-in forwards;
+}
+
+@keyframes cardSlideInRight {
+  0% {
+    opacity: 0;
+    transform: translateX(45px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes cardSlideOutRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(55px);
+  }
 }
 
 .battle-card-metal::after {
