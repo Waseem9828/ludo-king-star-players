@@ -1,56 +1,91 @@
+/* Support Page Container - Premium Card Layout */
+
 .support-page-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
-  padding: 16px 8px;
-  max-width: 480px;
+  gap: 12px;
+  max-width: 520px;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  overflow-x: hidden !important;
+  touch-action: pan-y !important;
   margin: 0 auto;
+  padding: 4px 2px 24px 2px;
+}
+
+/* Card Wrapper */
+.support-card {
   background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  padding: 16px 14px;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.support-card-header {
+  text-align: center;
+  margin-bottom: 8px;
+  width: 100%;
 }
 
 .support-header-title {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
-  color: #212529;
+  color: #111827;
   text-align: center;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.support-header-subtitle {
+  font-size: 12px;
+  color: #6c757d;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+  text-align: center;
 }
 
 .support-image-wrapper {
   width: 100%;
-  max-width: 320px;
+  max-width: 240px;
   display: flex;
   justify-content: center;
-  margin: 8px 0;
+  margin: 6px 0 12px 0;
 }
 
 .support-banner-image {
   width: 100%;
   height: auto;
-  max-height: 220px;
+  max-height: 180px;
   object-fit: contain;
 }
 
 .support-actions-stack {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  margin-top: 8px;
+  margin-top: 4px;
 }
 
 .support-action-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   width: 100%;
-  padding: 14px 20px;
+  padding: 12px 18px;
   border: none;
-  border-radius: 14px;
-  font-size: 15.5px;
+  border-radius: 10px;
+  font-size: 14.5px;
   font-weight: 800;
   cursor: pointer;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
@@ -61,40 +96,55 @@
 
 .support-action-btn.whatsapp-btn {
   background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
-  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.3);
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
 }
 
 .support-action-btn.whatsapp-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(37, 211, 102, 0.4);
+  box-shadow: 0 6px 18px rgba(37, 211, 102, 0.4);
 }
 
 .support-action-btn.telegram-btn {
   background: linear-gradient(135deg, #0088cc 0%, #006699 100%);
-  box-shadow: 0 6px 18px rgba(0, 136, 204, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 136, 204, 0.3);
 }
 
 .support-action-btn.telegram-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(0, 136, 204, 0.4);
+  box-shadow: 0 6px 18px rgba(0, 136, 204, 0.4);
 }
 
 .support-action-btn.facebook-btn {
   background: linear-gradient(135deg, #1877F2 0%, #0d52b7 100%);
-  box-shadow: 0 6px 18px rgba(24, 119, 242, 0.3);
+  box-shadow: 0 4px 14px rgba(24, 119, 242, 0.3);
 }
 
 .support-action-btn.facebook-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(24, 119, 242, 0.4);
+  box-shadow: 0 6px 18px rgba(24, 119, 242, 0.4);
 }
 
 .support-action-btn.instagram-btn {
   background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  box-shadow: 0 6px 18px rgba(220, 39, 67, 0.3);
+  box-shadow: 0 4px 14px rgba(220, 39, 67, 0.3);
 }
 
 .support-action-btn.instagram-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 8px 22px rgba(220, 39, 67, 0.4);
+  box-shadow: 0 6px 18px rgba(220, 39, 67, 0.4);
+}
+
+@media (max-width: 480px) {
+  .support-card {
+    padding: 12px 10px;
+    border-radius: 10px;
+  }
+  .support-header-title {
+    font-size: 16px;
+  }
+  .support-action-btn {
+    padding: 10px 14px;
+    font-size: 13.5px;
+    border-radius: 8px;
+  }
 }

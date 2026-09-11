@@ -46,7 +46,7 @@ export default function Leaderboard() {
       ) : (
         <div className="leaderboard-theme-banner">
           <div className="leaderboard-banner-content">
-            <h1 className="leaderboard-title">🏆 Mewat Play Leaderboard</h1>
+            <h1 className="leaderboard-title">🏆 ludo King adda .com Leaderboard</h1>
             <p className="leaderboard-subtitle">
               Top Players Ranked by Battle Winnings & Referred Friends
             </p>

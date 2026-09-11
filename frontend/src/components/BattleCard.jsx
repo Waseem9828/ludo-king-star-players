@@ -22,7 +22,7 @@ export default function BattleCard({
 
   const shortName = (name) => {
     if (!name) return "";
-    return name.slice(0, 6) + (name.length > 6 ? ".." : "");
+    return name.slice(0, 7) + (name.length > 7 ? ".." : "");
   };
 
   const canView = isParticipant || (isOpenState && !disabled);
@@ -55,8 +55,7 @@ export default function BattleCard({
           <div style={{ marginTop: "4px" }}>
             {status === "joined" && isOwn ? (
               <button
-                className="btn btn-sm"
-                style={{ background: "var(--ludo-green)", color: "white", padding: "3px 12px", fontSize: "12px", fontWeight: "bold", border: "1px solid var(--border)", boxShadow: "0 2px 8px rgba(34, 197, 94, 0.3)" }}
+                className="battle-card-btn-accept"
                 onClick={(e) => {
                   e.stopPropagation();
                   onAccept ? onAccept(e) : onView && onView(e);
@@ -66,8 +65,7 @@ export default function BattleCard({
               </button>
             ) : isParticipant ? (
               <button
-                className="btn btn-sm"
-                style={{ background: "var(--primary-blue)", color: "white", padding: "3px 12px", fontSize: "12px", border: "1px solid var(--primary-blue-dark)", boxShadow: "0 2px 8px rgba(10, 81, 225, 0.3)" }}
+                className="battle-card-btn-view"
                 onClick={(e) => {
                   e.stopPropagation();
                   onView && onView(e);
@@ -87,17 +85,7 @@ export default function BattleCard({
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "4px" }}>
               {isOwn ? (
                 <button
-                  className="btn btn-sm"
-                  style={{
-                    background: "var(--ludo-red)",
-                    color: "white",
-                    border: "1px solid #dc2626",
-                    padding: "6px 14px",
-                    fontSize: "13px",
-                    fontWeight: "bold",
-                    borderRadius: "8px",
-                    boxShadow: "0 2px 8px rgba(239, 68, 68, 0.4)",
-                  }}
+                  className="battle-card-btn-cancel"
                   onClick={(e) => {
                     e.stopPropagation();
                     onCancel && onCancel(e);
@@ -107,17 +95,7 @@ export default function BattleCard({
                 </button>
               ) : (
                 <button
-                  className="btn btn-sm"
-                  style={{
-                    background: "var(--primary-gradient)",
-                    color: "white",
-                    border: "1px solid var(--primary-blue-dark)",
-                    padding: "6px 16px",
-                    fontSize: "13px",
-                    fontWeight: "bold",
-                    borderRadius: "8px",
-                    boxShadow: "0 2px 8px rgba(10, 81, 225, 0.4)",
-                  }}
+                  className="battle-card-btn-play"
                   onClick={(e) => {
                     e.stopPropagation();
                     onJoin && onJoin(e);
@@ -140,4 +118,3 @@ export default function BattleCard({
     </div>
   );
 }
-

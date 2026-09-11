@@ -223,11 +223,11 @@ export default function MatchRoom() {
   );
 
   return (
-    <div className="stack">
+    <div className="match-room-page">
       {playingMyBattle && (
         <div
           className="notice-banner error row-between"
-          style={{ cursor: "pointer", alignItems: "center", borderLeft: "4px solid #ef4444" }}
+          style={{ cursor: "pointer", alignItems: "center", borderLeft: "4px solid #ef4444", marginBottom: "8px" }}
           onClick={() => navigate(`/match-room/${playingMyBattle._id}`)}
         >
           <div>
@@ -242,10 +242,9 @@ export default function MatchRoom() {
         </div>
       )}
 
-      <form className="row-between" onSubmit={handleCreateSubmit} style={{ gap: "8px", marginBottom: "8px" }}>
+      <form className="match-room-create-form" onSubmit={handleCreateSubmit}>
         <input
-          className="input"
-          style={{ flex: 1, padding: "10px", border: "2px solid var(--primary-blue)" }}
+          className="match-room-create-input"
           type="number"
           min="50"
           step="10"
@@ -255,9 +254,8 @@ export default function MatchRoom() {
         />
         <button
           type="submit"
-          className="btn btn-create-battle"
+          className="btn-create-battle"
           disabled={creating}
-          style={{ padding: "10px 16px" }}
         >
           {creating ? "..." : "Set"}
         </button>
@@ -273,8 +271,8 @@ export default function MatchRoom() {
         );
         if (activeMyBattles.length === 0) return null;
         return (
-          <div className="stack" style={{ marginTop: "8px" }}>
-            {dividers.my && <img src={dividers.my} alt="My Battles" style={{ width: "100%", height: "auto", borderRadius: "8px", display: "block" }} />}
+          <div className="match-section-list">
+            {dividers.my && <img src={dividers.my} alt="My Battles" className="room-divider-img" />}
             {activeMyBattles.map((match) => (
               <BattleCard
                 key={match._id}
@@ -292,8 +290,8 @@ export default function MatchRoom() {
       {/* 2. Open Battles Section */}
       {openError && <p className="notice-banner">{openError}</p>}
       {!loadingOpen && !openError && openBattles.length > 0 && (
-        <div className="stack" style={{ marginTop: "8px" }}>
-          {dividers.open && <img src={dividers.open} alt="Open Battles" style={{ width: "100%", height: "auto", borderRadius: "8px", display: "block" }} />}
+        <div className="match-section-list">
+          {dividers.open && <img src={dividers.open} alt="Open Battles" className="room-divider-img" />}
           {openBattles.map((battle) => (
             <BattleCard
               key={battle._id}
@@ -309,8 +307,8 @@ export default function MatchRoom() {
       {/* 3. Ongoing Battles Section */}
       {runError && <p className="notice-banner">{runError}</p>}
       {!loadingRunning && !runError && ongoingBattles.length > 0 && (
-        <div className="stack" style={{ marginTop: "8px" }}>
-          {dividers.running && <img src={dividers.running} alt="Ongoing Battles" style={{ width: "100%", height: "auto", borderRadius: "8px", display: "block" }} />}
+        <div className="match-section-list">
+          {dividers.running && <img src={dividers.running} alt="Ongoing Battles" className="room-divider-img" />}
           {ongoingBattles.map((battle) => (
             <BattleCard
               key={battle._id}
@@ -322,8 +320,6 @@ export default function MatchRoom() {
           ))}
         </div>
       )}
-
-
     </div>
   );
 }

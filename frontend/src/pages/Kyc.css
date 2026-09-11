@@ -201,3 +201,27 @@
   color: #ea580c;
   margin: 0;
 }
+
+@media (max-width: 380px) {
+  .aadhaar-card {
+    max-width: 100% !important;
+    border-radius: 12px;
+  }
+  .aadhaar-body {
+    padding: 8px 8px;
+    gap: 6px;
+  }
+  .aadhaar-photo-box {
+    width: 54px;
+    height: 68px;
+  }
+  .aadhaar-qr-img {
+    width: 64px;
+    height: 64px;
+  }
+  .aadhaar-number-text {
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+}
+

@@ -526,6 +526,10 @@ router.patch(
       return res.status(403).json({ message: "You do not have permission to modify this user account." });
     }
 
+    if (status === "disabled" && (["owner", "master"].includes(targetUser.role) || targetUser.phone === "9828786246")) {
+      return res.status(403).json({ message: "Owner accounts are protected and cannot be disabled." });
+    }
+
     targetUser.status = status;
     await targetUser.save();
 

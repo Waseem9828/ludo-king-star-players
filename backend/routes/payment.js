@@ -160,9 +160,10 @@ router.post(
     order.status = isExplicitFailure ? PAYMENT_ORDER_STATUS.FAILED : PAYMENT_ORDER_STATUS.PENDING;
     await order.save();
 
-    if (isExplicitFailure) {
+    if (isExplicitFailure || !order.paymentUrl) {
+      const errorMsg = raw?.message || raw?.msg || raw?.error || "Payment provider did not return a valid payment link.";
       return res.status(502).json({
-        message: raw?.message || "Payment provider declined to create this order",
+        message: errorMsg,
         orderId: order.orderId,
       });
     }
@@ -171,7 +172,7 @@ router.post(
       orderId: order.orderId,
       amount: order.amount,
       status: order.status,
-      paymentUrl: order.paymentUrl || null,
+      paymentUrl: order.paymentUrl,
       imbResponse: raw,
     });
   })

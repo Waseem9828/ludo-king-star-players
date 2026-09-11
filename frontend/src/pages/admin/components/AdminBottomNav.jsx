@@ -84,7 +84,7 @@ export default function AdminBottomNav() {
         className={`admin-more-overlay ${moreOpen ? "is-open" : ""}`}
         onClick={() => setMoreOpen(false)}
       >
-        <div className="admin-more-sheet" onClick={(e) => e.stopPropagation()}>
+        <div className={`admin-more-sheet ${moreOpen ? "is-open" : ""}`} onClick={(e) => e.stopPropagation()}>
           <div className="admin-more-sheet__handle" />
           <div className="admin-more-sheet__title">Admin Tools</div>
           <div className="admin-more-sheet__grid">

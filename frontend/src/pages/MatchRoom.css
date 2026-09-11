@@ -1,47 +1,88 @@
-.match-room__tabs {
-  margin-bottom: var(--space-4);
-  gap: var(--space-2);
+/* MatchRoom.css — Expanded Edge-to-Edge Mobile Room Page */
+
+.match-room-page {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 4px 0 24px 0;
 }
 
-.match-room__tabs .btn {
+.match-room-create-form {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100% !important;
+  margin-bottom: 8px;
+  box-sizing: border-box !important;
+}
+
+.match-room-create-input {
   flex: 1;
-}
-
-.match-room__my-row {
-  padding: var(--space-3) var(--space-4);
-}
-
-.match-room__amount {
-  font-weight: 800;
-  margin: 4px 0 2px 0;
+  height: 48px;
+  border-radius: 10px;
+  border: 2px solid var(--primary-blue, #0d6efd);
+  padding: 0 14px;
   font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  background: #ffffff;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.match-room-create-input:focus {
+  border-color: #0a58ca;
+  box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
 }
 
 .btn-create-battle {
+  height: 48px;
+  padding: 0 22px;
   background: #000000;
-  color: white;
+  color: #ffffff;
   border: none;
-  border-radius: 12px;
+  border-radius: 10px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  font-weight: 800;
+  font-weight: 900;
   font-size: 14px;
   transition: all 0.2s ease;
+  cursor: pointer;
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
-.btn-create-battle:hover {
+.btn-create-battle:hover:not(:disabled) {
   background: #1a1a1a;
   transform: translateY(-1px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+}
+
+.btn-create-battle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.match-section-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100% !important;
+  margin-top: 6px;
+  box-sizing: border-box !important;
 }
 
 .match-section-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 14px;
-  margin-bottom: 8px;
+  margin-top: 10px;
+  margin-bottom: 6px;
 }
 
 .match-section-title {
@@ -58,18 +99,40 @@
   background: rgba(10, 81, 225, 0.15);
 }
 
+.room-divider-img {
+  width: 100% !important;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+  margin: 8px 0 6px 0;
+  object-fit: cover;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  border: 1px solid var(--border);
+  box-sizing: border-box !important;
+}
+
 /* Mobile Optimizations for Match Room */
 @media (max-width: 480px) {
+  .match-room-create-input {
+    height: 44px;
+    font-size: 14px;
+    padding: 0 12px;
+  }
   .btn-create-battle {
+    height: 44px;
     font-size: 13px;
-    padding: 8px 14px !important;
+    padding: 0 16px;
     border-radius: 10px;
   }
   .match-section-header {
-    margin-top: 10px;
-    margin-bottom: 6px;
+    margin-top: 8px;
+    margin-bottom: 4px;
   }
   .match-section-title {
     font-size: 12px;
+  }
+  .room-divider-img {
+    margin: 6px 0 4px 0;
+    border-radius: 8px;
   }
 }

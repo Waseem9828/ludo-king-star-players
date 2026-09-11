@@ -1,43 +1,49 @@
+/* BattleCard.css — Full Width Native Touch Cards */
+
 .battle-card-metal {
   display: flex;
   align-items: center;
   justify-content: space-between;
   background: #ffffff;
   border: 1.5px solid #dee2e6;
-  border-radius: 6px;
-  padding: 10px 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  padding: 12px 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
   position: relative;
   overflow: hidden;
-  min-height: 64px;
-  animation: cardSlideInRight 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  min-height: 74px;
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box !important;
+  margin-bottom: 8px;
+  animation: cardSlideInRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .battle-card-metal.exiting {
-  animation: cardSlideOutRight 0.32s ease-in forwards;
+  animation: cardSlideOutRight 0.3s ease-in forwards;
 }
 
 @keyframes cardSlideInRight {
   0% {
     opacity: 0;
-    transform: translateX(45px);
+    transform: translateY(8px);
   }
   100% {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
 }
 
 @keyframes cardSlideOutRight {
   0% {
     opacity: 1;
-    transform: translateX(0);
+    transform: translateY(0);
   }
   100% {
     opacity: 0;
-    transform: translateX(55px);
+    transform: translateY(-8px);
   }
 }
 
@@ -54,7 +60,7 @@
 .battle-card-metal:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 20px rgba(13, 110, 253, 0.15);
-  border-color: var(--primary-blue);
+  border-color: var(--primary-blue, #0d6efd);
 }
 
 .battle-card-metal.disabled {
@@ -64,25 +70,27 @@
   box-shadow: none;
 }
 
+/* Avatars Left & Right */
 .battle-card-avatar-wrap {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-width: 60px;
+  min-width: 68px;
+  flex-shrink: 0;
 }
 
 .battle-card-avatar {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: #ffffff;
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #ffc107;
-  box-shadow: 0 3px 10px rgba(13, 110, 253, 0.25);
+  border: 2.5px solid #ffc107;
+  box-shadow: 0 3px 10px rgba(13, 110, 253, 0.2);
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -96,58 +104,139 @@
 
 .battle-card-avatar.empty {
   background: #f8f9fa;
-  color: var(--primary-blue);
-  border: 2px dashed var(--primary-blue);
+  color: var(--primary-blue, #0d6efd);
+  border: 2px dashed var(--primary-blue, #0d6efd);
   font-weight: bold;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .battle-card-name {
-  font-size: 11px;
-  color: #495057;
-  font-weight: 700;
-  margin-top: 4px;
+  font-size: 11.5px;
+  color: #1e293b;
+  font-weight: 800;
+  margin-top: 3px;
   text-transform: uppercase;
-  letter-spacing: 0.4px;
+  letter-spacing: 0.3px;
   text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 72px;
 }
 
+/* Center Column */
 .battle-card-center {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   flex: 1;
-  padding: 0 8px;
+  padding: 0 10px;
+  min-width: 0;
 }
 
 .battle-card-entry {
-  font-size: 15px;
-  font-weight: 800;
+  font-size: 17px;
+  font-weight: 900;
   color: #000000;
   margin-bottom: 2px;
   letter-spacing: -0.2px;
 }
 
 .battle-card-vs-img {
-  height: 26px;
+  height: 28px;
   width: auto;
   opacity: 0.95;
 }
 
-@media (max-width: 390px) {
+/* Action Buttons inside Card */
+.battle-card-btn-play {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: 1px solid #059669;
+  padding: 8px 18px;
+  font-size: 13.5px;
+  font-weight: 900;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+}
+
+.battle-card-btn-play:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(16, 185, 129, 0.45);
+}
+
+.battle-card-btn-cancel {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  border: 1px solid #dc2626;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 900;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.35);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.battle-card-btn-accept {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  border: 1px solid #059669;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 900;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(16, 185, 129, 0.3);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.battle-card-btn-view {
+  background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+  color: #ffffff;
+  border: 1px solid #0a58ca;
+  padding: 6px 14px;
+  font-size: 12.5px;
+  font-weight: 900;
+  border-radius: 8px;
+  box-shadow: 0 3px 10px rgba(13, 110, 253, 0.3);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* Mobile Optimizations for Battle Card — Full Width Touch Friendly */
+@media (max-width: 480px) {
   .battle-card-metal {
-    padding: 8px 10px;
-    min-height: 58px;
+    padding: 10px 12px;
+    min-height: 68px;
+    border-radius: 10px;
+    margin-bottom: 6px;
   }
   .battle-card-avatar {
-    width: 34px;
-    height: 34px;
+    width: 40px;
+    height: 40px;
+  }
+  .battle-card-avatar-wrap {
+    min-width: 60px;
   }
   .battle-card-entry {
-    font-size: 13px;
+    font-size: 16px;
   }
   .battle-card-vs-img {
-    height: 22px;
+    height: 26px;
+  }
+  .battle-card-btn-play {
+    padding: 7px 15px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+  .battle-card-btn-cancel {
+    padding: 7px 14px;
+    font-size: 12.5px;
+    border-radius: 8px;
   }
 }

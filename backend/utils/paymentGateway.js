@@ -14,20 +14,89 @@ export function generateOrderId() {
   return `ord_${Date.now().toString(36)}_${crypto.randomBytes(6).toString("hex")}`;
 }
 
-// IMB's create-order response schema wasn't included in the provided
-// documentation (only the request contract was). This checks the handful of
-// field-name conventions most Indian UPI-aggregator clones use for the
-// payment URL, without assuming any one of them — callers also get the full
-// raw response so nothing is lost if none of these match.
+// IMB's create-order response schema search helper.
+// Checks all common field conventions for payment URLs/intent links in Indian payment gateways
 function extractPaymentUrl(data) {
-  return (
-    data?.result?.payment_url ||
-    data?.payment_url ||
-    data?.result?.paymentUrl ||
-    data?.paymentUrl ||
-    data?.data?.payment_url ||
-    null
-  );
+  if (!data || typeof data !== "object") return null;
+
+  const candidateKeys = [
+    "payment_url", "paymentUrl", "payment_link", "paymentLink",
+    "pay_url", "payUrl", "url", "intent_url", "intentUrl",
+    "upi_url", "upiUrl", "qr_url", "qrUrl", "checkout_url",
+    "checkoutUrl", "gateway_url", "gatewayUrl", "link", "web_url"
+  ];
+
+  const searchObjects = [
+    data,
+    data.result,
+    data.data,
+    data.payload,
+    data.order,
+    data.details
+  ];
+
+  for (const obj of searchObjects) {
+    if (!obj || typeof obj !== "object") continue;
+    for (const key of candidateKeys) {
+      const val = obj[key];
+      if (val && typeof val === "string" && val.trim().length > 0) {
+        return val.trim();
+      }
+    }
+  }
+
+  // Recursive fallback: search for any http://, https://, or upi:// URL inside the raw response
+  try {
+    const jsonStr = JSON.stringify(data);
+    const match = jsonStr.match(/"(https?:\/\/[^"]+|upi:\/\/[^"]+)"/i);
+    if (match && match[1]) {
+      return match[1];
+    }
+  } catch {
+    // Ignore JSON stringify error
+  }
+
+  return null;
+}
+
+async function fetchImbApi(url, body) {
+  const agent = getProxyAgent();
+
+  if (agent) {
+    try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), IMB_REQUEST_TIMEOUT_MS);
+      const res = await fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body,
+        agent,
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+
+      if (res.status !== 407 && res.status !== 502 && res.status !== 503 && res.status !== 504) {
+        return res;
+      }
+      console.warn(`Proxy returned HTTP ${res.status}. Falling back to direct connection...`);
+    } catch (proxyErr) {
+      console.warn("Proxy request failed. Falling back to direct connection:", proxyErr.message);
+    }
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), IMB_REQUEST_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body,
+      signal: controller.signal,
+    });
+    return res;
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 // Calls IMB's create-order API. Throws a safe, user-facing Error (with
@@ -35,9 +104,12 @@ function extractPaymentUrl(data) {
 // exposed to the client, only logged server-side.
 export async function createImbOrder({ customerMobile, amount, orderId, redirectUrl, remark1, remark2 }) {
   const settings = await getSiteSettings();
-  const userToken = settings.imbApiToken || process.env.IMB_API_TOKEN || process.env.DEPOSIT_API_TOKEN;
+  const dbToken = String(settings.imbApiToken || "").trim();
+  const envToken = String(process.env.IMB_API_TOKEN || process.env.DEPOSIT_API_TOKEN || "").trim();
+  const userToken = dbToken || envToken;
+
   if (!userToken) {
-    throw Object.assign(new Error("Payment service is not configured. Please try again later."), { status: 500 });
+    throw Object.assign(new Error("Payment gateway API token is not configured. Please contact support."), { status: 500 });
   }
 
   const body = new URLSearchParams({
@@ -50,24 +122,9 @@ export async function createImbOrder({ customerMobile, amount, orderId, redirect
     remark2,
   });
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), IMB_REQUEST_TIMEOUT_MS);
-
   let res;
   try {
-    const fetchOptions = {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body,
-      signal: controller.signal,
-    };
-
-    const agent = getProxyAgent();
-    if (agent) {
-      fetchOptions.agent = agent;
-    }
-
-    res = await fetch(IMB_CREATE_ORDER_URL, fetchOptions);
+    res = await fetchImbApi(IMB_CREATE_ORDER_URL, body);
   } catch (err) {
     if (err.name === "AbortError") {
       console.error("IMB create-order request timed out");
@@ -75,8 +132,6 @@ export async function createImbOrder({ customerMobile, amount, orderId, redirect
     }
     console.error("IMB create-order request failed:", err.message);
     throw Object.assign(new Error("Unable to reach the payment provider. Please try again."), { status: 503 });
-  } finally {
-    clearTimeout(timeout);
   }
 
   const rawText = await res.text();
@@ -114,7 +169,10 @@ export async function createImbOrder({ customerMobile, amount, orderId, redirect
 
 export async function checkImbOrderStatus(orderId) {
   const settings = await getSiteSettings();
-  const userToken = settings.imbApiToken || process.env.IMB_API_TOKEN || process.env.DEPOSIT_API_TOKEN;
+  const dbToken = String(settings.imbApiToken || "").trim();
+  const envToken = String(process.env.IMB_API_TOKEN || process.env.DEPOSIT_API_TOKEN || "").trim();
+  const userToken = dbToken || envToken;
+
   if (!userToken) {
     throw Object.assign(new Error("Payment service is not configured. Please try again later."), { status: 500 });
   }

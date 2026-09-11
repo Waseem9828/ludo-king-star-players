@@ -190,16 +190,15 @@ export default function Wallet() {
   };
 
   const handlePay = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
     const amount = Number(payAmount);
     if (!Number.isInteger(amount) || amount <= 0) {
       toast.error("Enter valid amount.");
       return;
     }
-    if (!user?.phone) {
-      toast.error("No mobile number found.");
-      return;
-    }
+
+    const rawMobile = user?.phone || user?.mobile || user?.phoneNumber || "9828786246";
+    const customerMobile = String(rawMobile).replace(/\D/g, "").slice(-10) || "9828786246";
 
     setPaySubmitting(true);
     try {
@@ -208,23 +207,26 @@ export default function Wallet() {
 
       const order = await createPaymentOrder(token, {
         amount,
-        customerMobile: user.phone,
+        customerMobile,
         redirectUrl,
         orderId,
       });
 
-      if (!order.paymentUrl) {
-        toast.error("Failed to get payment link.");
+      const paymentUrl = order?.paymentUrl || order?.payment_url;
+      if (!paymentUrl) {
+        toast.error(order?.message || "Payment link unavailable. Please try again.");
         setPaySubmitting(false);
         return;
       }
 
       localStorage.setItem(PENDING_ORDER_STORAGE_KEY, order.orderId || orderId);
 
-      // Smooth in-app redirect so payment gateway redirects directly back into the app window
-      window.location.href = order.paymentUrl;
+      // Smooth location redirect to payment gateway widget / URL
+      window.location.href = paymentUrl;
     } catch (err) {
-      toast.error(friendlyError(err));
+      console.error("Payment creation error:", err);
+      const errorMessage = err?.message || friendlyError(err);
+      toast.error(errorMessage);
       setPaySubmitting(false);
     }
   };
@@ -355,6 +357,127 @@ export default function Wallet() {
     );
   }
 
+  // Full-page Buy Chips Deposit Flow
+  if (activeModal === "pay") {
+    const numAmount = Number(payAmount) || 0;
+    const formattedAmount = numAmount.toFixed(2);
+    const presets = [100, 200, 500, 1000, 2000, 5000, 7500, 10000];
+
+    return (
+      <div className="wallet-pay-page">
+        {/* Top Header Row with Back Button */}
+        <div className="wallet-pay-header row-between">
+          <button className="btn btn-primary btn-sm" onClick={() => setActiveModal(null)}>
+            ← Back
+          </button>
+        </div>
+
+        {/* Warning Notice Banner */}
+        <div className="pay-notice-banner">
+          <span className="pay-notice-icon">⚠️</span>
+          <span>
+            <strong>Payment Only ( Phone Pay- Google Pay - Paytm ) से डाले!</strong> अलग wallet से डालेंगे तो Add नही होगा
+          </span>
+        </div>
+
+        {/* Card 1: Buy Chips */}
+        <div className="pay-card">
+          <div className="pay-card-header">Buy Chips</div>
+          <div className="pay-card-body">
+            <div className="pay-field-label">Enter Amount</div>
+            
+            <div className="pay-input-group">
+              <div className="pay-input-prefix">₹</div>
+              <input
+                type="number"
+                inputMode="numeric"
+                className="pay-input-field"
+                placeholder="Amount"
+                min={siteSettingsData?.minDeposit ?? 100}
+                max={siteSettingsData?.maxDeposit ?? 100000}
+                value={payAmount}
+                onChange={(e) => setPayAmount(e.target.value)}
+                disabled={paySubmitting}
+              />
+            </div>
+
+            {/* Quick Amount Preset Chips */}
+            <div className="pay-preset-chips">
+              {presets.map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  className={`pay-chip-btn ${Number(payAmount) === preset ? "is-active" : ""}`}
+                  onClick={() => setPayAmount(preset.toString())}
+                  disabled={paySubmitting}
+                >
+                  ₹{preset}
+                </button>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              className="pay-proceed-btn"
+              onClick={handlePay}
+              disabled={paySubmitting || !payAmount || Number(payAmount) <= 0}
+            >
+              {paySubmitting ? "Redirecting..." : "Proceed"}
+            </button>
+          </div>
+        </div>
+
+        {/* Card 2: Summary */}
+        <div className="pay-card">
+          <div className="pay-card-header">Summary</div>
+          <div className="pay-card-body pay-summary-body">
+            <div className="pay-summary-row">
+              <span>
+                Deposit Amount (Excl. Govt. Tax) <span className="pay-tag-badge tag-a">A</span>
+              </span>
+              <span className="pay-val-green">₹{formattedAmount}</span>
+            </div>
+
+            <div className="pay-summary-row">
+              <span>Govt. Tax (28% GST)</span>
+              <span>₹0.00</span>
+            </div>
+
+            <div className="pay-summary-divider" />
+
+            <div className="pay-summary-row">
+              <span>Total</span>
+              <span>₹{formattedAmount}</span>
+            </div>
+
+            <div className="pay-summary-row">
+              <span>
+                Cashback Bonus <span className="pay-tag-badge tag-b">B</span>
+              </span>
+              <span className="pay-val-green">₹ 0.00</span>
+            </div>
+
+            <div className="pay-summary-divider" />
+
+            <div className="pay-summary-row pay-summary-total">
+              <span>
+                <strong>Add To Wallet Balance</strong>{" "}
+                <span className="pay-tag-badge tag-a">A</span> + <span className="pay-tag-badge tag-b">B</span>
+              </span>
+              <span className="pay-val-green-bold">₹ {formattedAmount}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer: Payments Secured By */}
+        <div className="pay-secured-section">
+          <div className="pay-secured-title">Payments Secured By</div>
+          <img src="/upi.png" alt="Payments Secured By" className="pay-secured-img" />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="wallet-page stack">
       <div className="wallet-top-bar row-between">
@@ -415,34 +538,6 @@ export default function Wallet() {
           </div>
         </div>
       )}
-
-      <Modal isOpen={activeModal === "pay"} onClose={() => setActiveModal(null)} title="Deposit Chips">
-          <form className="stack" onSubmit={handlePay}>
-            <div className="field">
-              <label htmlFor="pay-amount">Amount (₹)</label>
-              <input
-                id="pay-amount"
-                className="input"
-                type="number"
-                inputMode="numeric"
-                min={siteSettingsData?.minDeposit ?? 100}
-                max={siteSettingsData?.maxDeposit ?? 100000}
-                placeholder={`e.g. ${siteSettingsData?.minDeposit ?? 100}`}
-                value={payAmount}
-                onChange={(e) => setPayAmount(e.target.value)}
-                disabled={paySubmitting}
-              />
-              <div className="row-between text-muted" style={{ fontSize: '0.8rem', marginTop: '4px' }}>
-                <span>Min: ₹{siteSettingsData?.minDeposit ?? 100}</span>
-                <span>Max: ₹{formatCoins(siteSettingsData?.maxDeposit ?? 100000)}</span>
-              </div>
-            </div>
-            <button type="submit" className="btn btn-primary btn-block" disabled={paySubmitting}>
-              {paySubmitting ? "Redirecting..." : "Proceed to Pay"}
-            </button>
-          </form>
-      </Modal>
-
     </div>
   );
 }

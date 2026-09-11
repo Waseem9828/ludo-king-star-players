@@ -296,21 +296,43 @@ export default function AdminUserDetailModal({ isOpen, userId, onClose, onUserUp
                 borderTop: "1px solid rgba(255, 255, 255, 0.1)",
               }}
             >
-              <button
-                className={`btn btn-sm ${user.status === "disabled" ? "btn-primary" : "btn-danger"}`}
-                disabled={actionLoading}
-                onClick={handleToggleStatus}
-              >
-                {user.status === "disabled" ? "Enable Account" : "Disable Account"}
-              </button>
+              {["owner", "master"].includes(user?.role) || user?.phone === "9828786246" ? (
+                <button
+                  className="btn btn-sm btn-outline"
+                  disabled={true}
+                  style={{ cursor: "not-allowed", opacity: 0.65, color: "#cbd5e1", borderColor: "rgba(255,255,255,0.2)", background: "rgba(0,0,0,0.25)", pointerEvents: "none" }}
+                  title="Owner accounts cannot be disabled"
+                >
+                  🔒 Account Protected
+                </button>
+              ) : (
+                <button
+                  className={`btn btn-sm ${user.status === "disabled" ? "btn-primary" : "btn-danger"}`}
+                  disabled={actionLoading}
+                  onClick={handleToggleStatus}
+                >
+                  {user.status === "disabled" ? "Enable Account" : "Disable Account"}
+                </button>
+              )}
 
-              <button
-                className={`btn btn-sm ${user.walletFrozen ? "btn-primary" : "btn-danger"}`}
-                disabled={actionLoading}
-                onClick={handleToggleFreeze}
-              >
-                {user.walletFrozen ? "Unfreeze Wallet" : "Freeze Wallet"}
-              </button>
+              {["owner", "master"].includes(user?.role) || user?.phone === "9828786246" ? (
+                <button
+                  className="btn btn-sm btn-outline"
+                  disabled={true}
+                  style={{ cursor: "not-allowed", opacity: 0.65, color: "#cbd5e1", borderColor: "rgba(255,255,255,0.2)", background: "rgba(0,0,0,0.25)", pointerEvents: "none" }}
+                  title="Owner accounts cannot be frozen"
+                >
+                  🔒 Wallet Protected
+                </button>
+              ) : (
+                <button
+                  className={`btn btn-sm ${user.walletFrozen ? "btn-primary" : "btn-danger"}`}
+                  disabled={actionLoading}
+                  onClick={handleToggleFreeze}
+                >
+                  {user.walletFrozen ? "Unfreeze Wallet" : "Freeze Wallet"}
+                </button>
+              )}
 
               {["master", "owner", "finance_admin"].includes(currentUser?.role) && (
                 <button
@@ -335,10 +357,10 @@ export default function AdminUserDetailModal({ isOpen, userId, onClose, onUserUp
               {["master", "owner"].includes(currentUser?.role) && (
                 <select
                   className="input"
-                  style={{ width: "auto", padding: "4px 8px", fontSize: "12px", height: "32px" }}
+                  style={{ width: "auto", padding: "4px 8px", fontSize: "12px", height: "32px", cursor: (["owner", "master"].includes(user?.role) || user?.phone === "9828786246") ? "not-allowed" : "pointer" }}
                   value={user.role || "user"}
                   onChange={(e) => handleChangeRole(e.target.value)}
-                  disabled={actionLoading}
+                  disabled={actionLoading || (["owner", "master"].includes(user?.role) || user?.phone === "9828786246")}
                 >
                   <option value="user">Role: User</option>
                   <option value="finance_admin">Role: Finance Manager (Finance & Users)</option>

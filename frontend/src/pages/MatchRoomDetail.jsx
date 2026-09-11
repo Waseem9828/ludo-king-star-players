@@ -86,6 +86,7 @@ export default function MatchRoomDetail() {
   const [proofSubmitting, setProofSubmitting] = useState(false);
   const [roomCodeInput, setRoomCodeInput] = useState("");
   const [actionLoading, setActionLoading] = useState(false);
+  const [expandedImage, setExpandedImage] = useState(null);
 
   // Cancellation Modal state
   const [showCancelModal, setShowCancelModal] = useState(false);
@@ -629,15 +630,38 @@ Believe me this is an awesome game!
                         alt="Screenshot preview"
                         style={{
                           width: "100%",
-                          maxHeight: 220,
+                          maxHeight: 380,
                           objectFit: "contain",
-                          borderRadius: "8px",
+                          borderRadius: "10px",
                           border: "1px solid var(--border)",
-                          display: "block"
+                          display: "block",
+                          background: "#090d16",
+                          cursor: "pointer"
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedImage(proofPreview);
                         }}
                       />
-                      <div style={{ position: "absolute", top: "8px", right: "8px", background: "rgba(0,0,0,0.7)", padding: "4px 10px", borderRadius: "14px", fontSize: "12px", color: "white", fontWeight: "bold" }}>
-                        Tap to change
+                      <div 
+                        style={{ 
+                          position: "absolute", 
+                          top: "8px", 
+                          right: "8px", 
+                          background: "rgba(0,0,0,0.75)", 
+                          padding: "5px 12px", 
+                          borderRadius: "16px", 
+                          fontSize: "12px", 
+                          color: "white", 
+                          fontWeight: "bold",
+                          backdropFilter: "blur(4px)"
+                        }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedImage(proofPreview);
+                        }}
+                      >
+                        🔍 Expand Left-Right / Tap to Change
                       </div>
                     </div>
                   )}
@@ -665,44 +689,101 @@ Believe me this is an awesome game!
 
       {/* --- RESULT PROOF VIEWER --- */}
       {match.resultProof?.length > 0 && (
-        <div className="card stack">
-          <p className="stat-label">Submitted Proofs</p>
-          <div className="row" style={{ flexWrap: "wrap", gap: "var(--space-3)" }}>
+        <div className="card stack" style={{ padding: "16px", borderRadius: "18px" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "12px" }}>
+            <p className="stat-label" style={{ fontSize: "15px", color: "var(--text)", fontWeight: "bold", margin: 0 }}>
+              📸 Submitted Proof Screenshots
+            </p>
+            <span style={{ fontSize: "12px", color: "var(--text-muted)" }}>Tap image to expand</span>
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px", width: "100%" }}>
             {match.resultProof.map((proof, i) => (
-              <div key={i}>
-                {proof.imageUrl ? (
-                  <img
-                    src={proof.imageUrl}
-                    alt="Result proof"
-                    style={{
-                      width: 140,
-                      height: 100,
-                      objectFit: "cover",
-                      borderRadius: "var(--radius-md)",
-                      border: "1px solid var(--border)",
+              <div 
+                key={i} 
+                style={{ 
+                  background: "var(--surface-alt)", 
+                  borderRadius: "14px", 
+                  padding: "12px",
+                  border: "1px solid var(--border)",
+                  width: "100%"
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "10px" }}>
+                  <span style={{ fontSize: "14px", fontWeight: "bold", color: "var(--text)" }}>
+                    👤 {proof.user?.name || "Player"}
+                  </span>
+                  <span 
+                    style={{ 
+                      padding: "4px 12px", 
+                      borderRadius: "12px", 
+                      fontSize: "12px", 
+                      fontWeight: "bold",
+                      background: proof.claimedResult === "WIN" ? "rgba(34,197,94,0.15)" : "rgba(239,68,68,0.15)",
+                      color: proof.claimedResult === "WIN" ? "var(--ludo-green)" : "#ef4444",
+                      border: proof.claimedResult === "WIN" ? "1px solid rgba(34,197,94,0.3)" : "1px solid rgba(239,68,68,0.3)"
                     }}
-                  />
+                  >
+                    Claimed: {proof.claimedResult}
+                  </span>
+                </div>
+
+                {proof.imageUrl ? (
+                  <div 
+                    style={{ position: "relative", width: "100%", cursor: "pointer", borderRadius: "10px", overflow: "hidden" }}
+                    onClick={() => setExpandedImage(proof.imageUrl)}
+                  >
+                    <img
+                      src={proof.imageUrl}
+                      alt="Result proof"
+                      style={{
+                        width: "100%",
+                        maxHeight: 380,
+                        objectFit: "contain",
+                        borderRadius: "10px",
+                        border: "1px solid var(--border)",
+                        display: "block",
+                        background: "#090d16"
+                      }}
+                    />
+                    <div 
+                      style={{ 
+                        position: "absolute", 
+                        bottom: "8px", 
+                        right: "8px", 
+                        background: "rgba(0,0,0,0.8)", 
+                        padding: "5px 12px", 
+                        borderRadius: "16px", 
+                        fontSize: "12px", 
+                        color: "white", 
+                        fontWeight: "bold",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "4px",
+                        backdropFilter: "blur(4px)"
+                      }}
+                    >
+                      🔍 Expand Image Left-Right
+                    </div>
+                  </div>
                 ) : (
                   <div
                     style={{
-                      width: 140,
-                      height: 100,
+                      width: "100%",
+                      height: 120,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
-                      background: "rgba(15,23,42,0.6)",
-                      borderRadius: "var(--radius-md)",
-                      border: "1px solid var(--border)",
-                      fontSize: "12px",
-                      color: "#94a3b8",
+                      background: "rgba(0,0,0,0.2)",
+                      borderRadius: "10px",
+                      border: "1px dashed var(--border)",
+                      fontSize: "13px",
+                      color: "var(--text-muted)",
                     }}
                   >
-                    No Screenshot
+                    No Screenshot Uploaded
                   </div>
                 )}
-                <p className="text-faint">
-                  {proof.user?.name || "Player"} claims {proof.claimedResult}
-                </p>
               </div>
             ))}
           </div>
@@ -770,6 +851,35 @@ Believe me this is an awesome game!
             </div>
           </div>
         </Modal>
+      )}
+
+      {/* --- EXPANDED IMAGE LIGHTBOX MODAL --- */}
+      {expandedImage && (
+        <div 
+          className="image-lightbox-overlay"
+          onClick={() => setExpandedImage(null)}
+        >
+          <div className="image-lightbox-container" onClick={(e) => e.stopPropagation()}>
+            <button 
+              className="image-lightbox-close"
+              onClick={() => setExpandedImage(null)}
+              title="Close image"
+            >
+              ✕
+            </button>
+            <img 
+              src={expandedImage} 
+              alt="Expanded Match Proof" 
+              className="image-lightbox-img"
+            />
+            <div className="image-lightbox-footer">
+              <span>🔍 Fullscreen Room Image View</span>
+              <button className="btn btn-sm btn-ghost" onClick={() => setExpandedImage(null)} style={{ color: "#ffffff" }}>
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

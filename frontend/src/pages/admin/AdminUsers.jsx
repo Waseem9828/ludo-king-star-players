@@ -67,6 +67,10 @@ export default function AdminUsers() {
   });
 
   const toggleStatus = async (user) => {
+    if (["owner", "master"].includes(user.role) || user.phone === "9828786246") {
+      setActionError("Owner accounts are protected and cannot be disabled.");
+      return;
+    }
     const nextStatus = user.status === "disabled" ? "active" : "disabled";
     setUpdatingId(user._id);
     setActionError("");
@@ -329,13 +333,24 @@ export default function AdminUsers() {
                       Adjust
                     </button>
                   )}
-                  <button
-                    className={`btn btn-sm ${user.status === "disabled" ? "btn-success" : "btn-danger"}`}
-                    disabled={updatingId === user._id}
-                    onClick={() => toggleStatus(user)}
-                  >
-                    {user.status === "disabled" ? "Enable" : "Disable"}
-                  </button>
+                  {["owner", "master"].includes(user.role) || user.phone === "9828786246" ? (
+                    <button
+                      className="btn btn-sm btn-outline"
+                      disabled={true}
+                      style={{ cursor: "not-allowed", opacity: 0.65, background: "rgba(0,0,0,0.05)", border: "1px solid var(--border)", color: "var(--text-muted)", pointerEvents: "none" }}
+                      title="Owner accounts cannot be disabled"
+                    >
+                      🔒 Protected
+                    </button>
+                  ) : (
+                    <button
+                      className={`btn btn-sm ${user.status === "disabled" ? "btn-success" : "btn-danger"}`}
+                      disabled={updatingId === user._id}
+                      onClick={() => toggleStatus(user)}
+                    >
+                      {user.status === "disabled" ? "Enable" : "Disable"}
+                    </button>
+                  )}
                 </div>
               </div>
             ))}
@@ -458,14 +473,25 @@ export default function AdminUsers() {
                               Adjust
                             </button>
                           )}
-                          <button
-                            className={`btn btn-sm ${user.status === "disabled" ? "btn-success" : "btn-danger"}`}
-                            style={{ fontSize: "12px", padding: "6px 12px", borderRadius: "8px" }}
-                            disabled={updatingId === user._id}
-                            onClick={() => toggleStatus(user)}
-                          >
-                            {user.status === "disabled" ? "Enable" : "Disable"}
-                          </button>
+                          {["owner", "master"].includes(user.role) || user.phone === "9828786246" ? (
+                            <button
+                              className="btn btn-sm btn-outline"
+                              disabled={true}
+                              style={{ fontSize: "12px", padding: "6px 12px", borderRadius: "8px", cursor: "not-allowed", opacity: 0.65, background: "rgba(0,0,0,0.05)", border: "1px solid var(--border)", color: "var(--text-muted)", pointerEvents: "none" }}
+                              title="Owner accounts cannot be disabled"
+                            >
+                              🔒 Protected
+                            </button>
+                          ) : (
+                            <button
+                              className={`btn btn-sm ${user.status === "disabled" ? "btn-success" : "btn-danger"}`}
+                              style={{ fontSize: "12px", padding: "6px 12px", borderRadius: "8px" }}
+                              disabled={updatingId === user._id}
+                              onClick={() => toggleStatus(user)}
+                            >
+                              {user.status === "disabled" ? "Enable" : "Disable"}
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

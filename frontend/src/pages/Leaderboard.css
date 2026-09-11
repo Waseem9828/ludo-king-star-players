@@ -5,8 +5,12 @@
   flex-direction: column;
   gap: 12px;
   max-width: 680px;
+  width: 100% !important;
+  box-sizing: border-box !important;
   margin: 0 auto;
   padding-bottom: 24px;
+  overflow-x: hidden !important;
+  touch-action: pan-y !important;
 }
 
 /* 1. TOP BANNER CONTAINERS */
