@@ -1,14 +1,21 @@
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 html,
 body {
   margin: 0;
   padding: 0;
-  width: 100vw;
-  height: 100dvh;
-  overflow: hidden;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+  touch-action: pan-y !important;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
 }
 
 body {
@@ -27,11 +34,12 @@ body {
   }
 }
 
-/* Old glowing orbs removed in favor of global AnimatedBackground */
-
 #root {
-  max-width: 100%;
-  overflow-x: hidden;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  overflow-x: hidden !important;
+  touch-action: pan-y !important;
 }
 
 a {

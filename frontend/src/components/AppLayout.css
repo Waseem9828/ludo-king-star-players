@@ -1,4 +1,4 @@
-/* Base & Mobile Reset */
+/* Base & Mobile Reset - Native App Fit */
 .desktop-layout {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -6,6 +6,8 @@
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: pan-y;
   background: #ffffff;
 }
 
@@ -19,7 +21,10 @@
   flex-direction: column;
   box-shadow: 0 0 24px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
-  overflow: hidden;
+  overflow-x: hidden !important;
+  overflow-y: hidden;
+  overscroll-behavior: none;
+  touch-action: pan-y;
   z-index: 2;
 }
 
@@ -28,6 +33,8 @@
   flex-direction: column;
   height: 100%;
   background: #ffffff;
+  overflow-x: hidden !important;
+  touch-action: pan-y;
 }
 
 .app-body {
@@ -35,7 +42,8 @@
   align-items: flex-start;
   flex: 1;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
+  touch-action: pan-y;
 }
 
 .app-content {
@@ -45,16 +53,22 @@
   background: #ffffff;
   display: flex;
   flex-direction: column;
+  overflow-x: hidden !important;
+  touch-action: pan-y;
 }
 
 .app-content.is-scrollable {
   overflow-y: auto;
+  overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
 }
 
 .app-content.is-sticky {
   overflow-y: auto;
+  overflow-x: hidden !important;
   max-height: 100%;
+  touch-action: pan-y;
 }
 
 @media (min-height: 560px) {
