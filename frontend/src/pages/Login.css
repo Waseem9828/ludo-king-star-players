@@ -208,3 +208,54 @@
   font-size: inherit;
   cursor: pointer;
 }
+
+/* Mobile Optimizations for Login Page */
+@media (max-width: 480px) {
+  .login-page {
+    padding: 12px 10px;
+    gap: 12px;
+    min-height: auto;
+  }
+
+  .login-bonus-container {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+
+  .login-card-title {
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+
+  .login-field {
+    padding: 14px 14px 0;
+  }
+
+  .login-legal {
+    padding: 10px 14px 0;
+    font-size: 12px;
+  }
+
+  .login-otp-btn {
+    width: calc(100% - 28px);
+    margin: 14px;
+    padding: 13px;
+    font-size: 14px;
+  }
+
+  .login-register-text {
+    padding: 0 14px 14px;
+    font-size: 13px;
+  }
+
+  .login-referral-badge {
+    margin: 10px 14px 0;
+    padding: 8px 10px;
+    font-size: 12.5px;
+  }
+
+  .login-otp-hint {
+    padding: 12px 14px 0;
+    font-size: 13px;
+  }
+}

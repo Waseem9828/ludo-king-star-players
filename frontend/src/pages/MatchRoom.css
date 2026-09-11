@@ -57,3 +57,19 @@
   height: 1px;
   background: rgba(10, 81, 225, 0.15);
 }
+
+/* Mobile Optimizations for Match Room */
+@media (max-width: 480px) {
+  .btn-create-battle {
+    font-size: 13px;
+    padding: 8px 14px !important;
+    border-radius: 10px;
+  }
+  .match-section-header {
+    margin-top: 10px;
+    margin-bottom: 6px;
+  }
+  .match-section-title {
+    font-size: 12px;
+  }
+}
