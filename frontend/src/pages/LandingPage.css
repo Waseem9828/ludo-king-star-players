@@ -1,0 +1,129 @@
+.landing-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  min-height: calc(100vh - 120px);
+  padding: 12px 24px 40px;
+  background: #ffffff;
+  position: relative;
+}
+
+/* Dice GIF */
+.landing-dice-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding-top: 40px;
+}
+
+.landing-dice-gif {
+  width: 240px;
+  height: 240px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.12));
+  animation: diceBounce 3s ease-in-out infinite;
+}
+
+@keyframes diceBounce {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Disclaimer Text */
+.landing-disclaimer {
+  text-align: center;
+  width: 100%;
+  max-width: 320px;
+  margin: 28px auto;
+  padding: 0 16px;
+}
+
+.landing-disclaimer p {
+  font-size: 0.95rem;
+  font-style: italic;
+  font-weight: 500;
+  color: #4b5563;
+  line-height: 1.75;
+  margin: 0;
+  text-align: center;
+}
+
+/* CTA Row: PLAY NOW + WhatsApp */
+.landing-cta-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.landing-play-btn {
+  flex: 1;
+  padding: 16px;
+  background: #1d4ed8;
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  text-transform: uppercase;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 16px rgba(29, 78, 216, 0.35);
+}
+
+.landing-play-btn:hover {
+  background: #1e40af;
+  box-shadow: 0 6px 20px rgba(29, 78, 216, 0.45);
+  transform: translateY(-1px);
+}
+
+.landing-play-btn:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 8px rgba(29, 78, 216, 0.3);
+}
+
+/* WhatsApp Support Button */
+.landing-whatsapp-btn {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  background: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.45);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+  overflow: visible;
+}
+
+.landing-whatsapp-btn::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  background: rgba(37, 211, 102, 0.35);
+  animation: waPulse 2s ease-out infinite;
+  z-index: -1;
+}
+
+.landing-whatsapp-btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.55);
+}
+
+.landing-whatsapp-btn:active {
+  transform: scale(0.96);
+}
+
+@keyframes waPulse {
+  0%   { transform: scale(1);   opacity: 0.8; }
+  100% { transform: scale(1.7); opacity: 0; }
+}

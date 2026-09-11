@@ -1,0 +1,182 @@
+.policy-shutter-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 16px 8px 32px 8px;
+  animation: fadeInUpLayer 0.4s ease-out;
+}
+
+.policy-shutter-title-main {
+  font-size: 22px;
+  font-weight: 900;
+  color: #000000;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+/* Shutter Accordion Card Item */
+.shutter-item {
+  border-radius: 14px;
+  border: 1px solid #dee2e6;
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.shutter-item.is-open {
+  border-color: #000000;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Shutter Black Header Button */
+.shutter-header {
+  width: 100%;
+  padding: 14px 18px;
+  background: #000000;
+  color: #ffffff;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.shutter-header:hover {
+  background: #1a1a1a;
+}
+
+.shutter-title {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  color: #ffffff;
+}
+
+.shutter-icon {
+  font-size: 13px;
+  color: #ffc107;
+  transition: transform 0.3s ease;
+}
+
+.shutter-item.is-open .shutter-icon {
+  transform: rotate(180deg);
+}
+
+/* Shutter Body Content Reveal Transition */
+.shutter-body-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.shutter-item.is-open .shutter-body-wrapper {
+  grid-template-rows: 1fr;
+}
+
+.shutter-body-content {
+  overflow: hidden;
+  padding: 0 20px;
+  line-height: 1.8;
+  font-size: 14.5px;
+  color: #334155;
+  transition: padding 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.shutter-item.is-open .shutter-body-content {
+  padding: 20px;
+}
+
+.shutter-body-content h2 {
+  font-size: 16px;
+  font-weight: 800;
+  color: #0f172a;
+  border-bottom: 1.5px solid #e2e8f0;
+  padding-bottom: 6px;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.shutter-body-content h2:first-child {
+  margin-top: 0;
+}
+
+.shutter-body-content p {
+  margin: 0 0 12px 0;
+  color: #475569;
+}
+
+.shutter-body-content ul {
+  padding-left: 20px;
+  margin: 0 0 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #475569;
+}
+
+/* Example Calculation Box */
+.policy-example-box {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin: 12px 0;
+}
+
+.example-title {
+  font-weight: 800;
+  color: #0f172a;
+  margin-bottom: 6px !important;
+}
+
+/* Policy Note Banners */
+.policy-note-box {
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  margin-top: 16px;
+  border: 1px solid transparent;
+}
+
+.green-note {
+  background: #f6ffed;
+  border-color: #b7eb8f;
+  color: #276749;
+}
+
+.yellow-note {
+  background: #fffbe6;
+  border-color: #ffe58f;
+  color: #744210;
+}
+
+.blue-note {
+  background: #e6f7ff;
+  border-color: #91d5ff;
+  color: #0050b3;
+}
+
+.red-note {
+  background: #fff2f0;
+  border-color: #ffccc7;
+  color: #9e1068;
+}
+
+@keyframes fadeInUpLayer {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

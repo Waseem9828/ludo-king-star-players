@@ -1,0 +1,218 @@
+.referral-page {
+  padding-bottom: 1rem;
+}
+
+.referral-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Card Styling */
+.ref-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(10, 81, 225,0.02);
+}
+
+.ref-card-header {
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 16px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--primary-blue);
+}
+
+.ref-card-body {
+  padding: 12px;
+}
+
+/* Earnings Grid */
+.ref-earnings-grid {
+  display: flex;
+  align-items: center;
+  padding: 16px 0;
+}
+
+.ref-stat {
+  flex: 1;
+  text-align: center;
+}
+
+.ref-stat-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.ref-stat-value {
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.ref-stat-divider {
+  width: 1px;
+  height: 40px;
+  background: var(--border);
+}
+
+/* Code Section */
+.ref-code-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.ref-illustration {
+  max-width: 200px;
+  width: 100%;
+  height: auto;
+  margin: 8px 0 16px;
+}
+
+/* Input Group */
+.ref-input-group {
+  display: flex;
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface-alt);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.ref-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 12px 16px;
+  font-size: 16px;
+  color: var(--text);
+  outline: none;
+}
+
+.ref-copy-btn {
+  background: var(--primary-blue); 
+  color: white;
+  border: none;
+  border-radius: 0;
+  padding: 0 24px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.ref-copy-btn:hover {
+  background: var(--primary-blue-dark);
+  color: white;
+}
+
+.ref-or {
+  margin: 12px 0;
+  font-weight: 800;
+  font-size: 16px;
+  color: var(--text);
+}
+
+/* Actions */
+.ref-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.ref-actions .btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  color: white;
+}
+
+.ref-btn-wa {
+  background: #25d366; /* WhatsApp Green */
+}
+.ref-btn-wa:hover {
+  background: #1eb956;
+  color: white;
+}
+
+.ref-btn-tg {
+  background: #0088cc; /* Telegram Blue */
+}
+.ref-btn-tg:hover {
+  background: #007bb8;
+  color: white;
+}
+
+.ref-btn-clip {
+  background: var(--play-yellow); /* Yellow */
+  color: var(--text);
+}
+.ref-btn-clip:hover {
+  background: var(--play-orange);
+  color: var(--text);
+}
+
+/* How It Works */
+.ref-how-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1px; /* Creates the border effect with background */
+  background: var(--border);
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ref-how-box {
+  background: var(--surface);
+  padding: 16px 20px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.ref-how-box strong {
+  color: var(--text);
+}
+
+/* Old Referrals List adaptation */
+.ref-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.ref-list-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.ref-list-item:last-child {
+  border-bottom: none;
+}
+
+.ref-list-name {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.ref-list-meta {
+  color: var(--text-muted);
+  font-size: 13px;
+}

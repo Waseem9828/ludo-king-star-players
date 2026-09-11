@@ -1,0 +1,338 @@
+/* Match Room Detail - Platform UI Theme (Light) */
+.match-detail__container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding-bottom: var(--space-6);
+}
+
+.match-detail__top-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.match-detail__back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.match-detail__back:hover {
+  color: var(--text);
+}
+
+/* VS Arena Box */
+.match-arena-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(10, 81, 225, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+  overflow: hidden;
+}
+
+.match-arena-card::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(37, 99, 235, 0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.match-arena__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.match-arena__id {
+  font-family: monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+}
+
+/* Players VS Layout */
+.match-arena__versus {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 12px 0;
+  position: relative;
+}
+
+.match-arena__player {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.match-arena__avatar-ring {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--primary-gradient);
+  padding: 3px;
+  box-shadow: 0 4px 10px rgba(10, 81, 225, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.match-arena__avatar-ring.empty {
+  background: var(--surface-alt);
+  box-shadow: none;
+}
+
+.match-arena__avatar-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+}
+
+.match-arena__player-name {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--text);
+  text-align: center;
+}
+
+.match-arena__player-role {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.match-arena__vs-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--primary-gradient);
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(10, 81, 225, 0.3);
+  border: 2px solid var(--surface);
+  z-index: 2;
+}
+
+/* Stats Chips */
+.match-arena__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.match-stat-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.match-stat-chip__label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.match-stat-chip__value {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--play-orange);
+  margin-top: 2px;
+}
+
+/* Room Code Banner */
+.room-code-banner {
+  background: rgba(34, 177, 76, 0.1);
+  border: 2px solid var(--ludo-green);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(34, 177, 76, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.room-code-banner__title {
+  font-size: 12px;
+  color: var(--ludo-green);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.room-code-banner__code {
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: 6px;
+  color: var(--ludo-green);
+  font-family: monospace;
+  word-break: break-all;
+  white-space: pre-wrap;
+  text-align: center;
+}
+
+@media (max-width: 400px) {
+  .room-code-banner__code {
+    font-size: 1.8rem;
+    letter-spacing: 4px;
+  }
+}
+
+.btn-copy-code {
+  background: var(--primary-gradient);
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(10, 81, 225, 0.3);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-copy-code:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(10, 81, 225, 0.4);
+}
+
+/* Outcome Form */
+.result-form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(10, 81, 225, 0.05);
+}
+
+.outcome-toggle-group {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.btn-outcome {
+  flex: 1;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 15px;
+  border: 1px solid var(--border);
+  background: var(--surface-alt);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-outcome.win-active {
+  background: var(--ludo-green);
+  color: white;
+  border-color: var(--ludo-green);
+  box-shadow: 0 4px 15px rgba(34, 177, 76, 0.3);
+}
+
+.btn-outcome.loss-active {
+  background: var(--ludo-red);
+  color: white;
+  border-color: var(--ludo-red);
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+/* 15-Minute Countdown Game Timer Card */
+.match-timer-card {
+  background: #ffffff;
+  border: 2px solid var(--primary-blue);
+  border-radius: 16px;
+  padding: 16px;
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(13, 110, 253, 0.12);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #212529;
+  position: relative;
+  overflow: hidden;
+}
+
+.match-timer-card.is-expired {
+  background: #fef2f2;
+  border: 2px solid #ef4444;
+  box-shadow: 0 4px 20px rgba(239, 68, 68, 0.2);
+  animation: pulseExpired 2s infinite ease-in-out;
+}
+
+@keyframes pulseExpired {
+  0% { box-shadow: 0 0 8px rgba(239, 68, 68, 0.2); }
+  50% { box-shadow: 0 0 16px rgba(239, 68, 68, 0.4); }
+  100% { box-shadow: 0 0 8px rgba(239, 68, 68, 0.2); }
+}
+
+.match-timer__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--primary-blue);
+}
+
+.match-timer-card.is-expired .match-timer__header {
+  color: #dc2626;
+}
+
+.match-timer__clock {
+  font-family: 'Courier New', Courier, monospace, sans-serif;
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: var(--primary-blue);
+  line-height: 1;
+  margin: 4px 0;
+}
+
+.match-timer-card.is-expired .match-timer__clock {
+  color: #dc2626;
+}
+
+.match-timer__subtitle {
+  font-size: 12px;
+  color: #6c757d;
+  margin: 0;
+  font-weight: 500;
+}

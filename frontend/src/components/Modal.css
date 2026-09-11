@@ -1,0 +1,105 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 16px;
+}
+
+.modal-backdrop.bottom-sheet {
+  align-items: flex-end;
+  padding: 0;
+}
+
+.modal-panel {
+  width: 100%;
+  max-width: 440px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-pop);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-panel.bottom-sheet {
+  max-width: 460px;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 16px;
+  border-top-right-radius: 16px;
+  padding: 8px 10px 10px 10px;
+  box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.25);
+  animation: slideUpBottom 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  background: #ffffff;
+  position: relative;
+}
+
+.bottom-sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: #cbd5e1;
+  border-radius: 10px;
+  margin: 0 auto 6px auto;
+}
+
+.modal-close-btn-no-title {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  z-index: 10;
+  background: #f1f5f9;
+  border-radius: 50%;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #cbd5e1;
+  padding: 0;
+  cursor: pointer;
+  color: #475569;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.modal-close-btn-no-title:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+@keyframes slideUpBottom {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.modal-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.modal-panel__body {
+  color: var(--text-muted);
+  font-size: 14px;
+}
+
+@media (min-width: 640px) {
+  .modal-backdrop {
+    align-items: center;
+  }
+
+  .modal-panel {
+    border-radius: var(--radius-lg);
+  }
+}

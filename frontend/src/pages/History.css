@@ -1,0 +1,51 @@
+.history__tabs {
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.history-row__title {
+  font-weight: 600;
+  margin-top: 4px;
+}
+
+.wallet-history {
+  padding: 0;
+}
+
+.wallet-history__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 14px var(--space-4);
+  border-bottom: 1px solid var(--border);
+}
+
+.wallet-history__item:last-child {
+  border-bottom: none;
+}
+
+.wallet-history__info {
+  min-width: 0;
+}
+
+.wallet-history__type {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.wallet-history__meta {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.wallet-history__amount {
+  font-weight: 700;
+  font-size: 15px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.wallet-history__amount--credit {
+  color: var(--primary);
+}

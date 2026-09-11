@@ -1,0 +1,126 @@
+.battle-card-metal {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1.5px solid #dee2e6;
+  border-radius: 6px;
+  padding: 10px 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  min-height: 64px;
+}
+
+.battle-card-metal::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -150%; bottom: 0; width: 60%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
+  transform: skewX(-25deg);
+  animation: metallicShine 4s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.battle-card-metal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(13, 110, 253, 0.15);
+  border-color: var(--primary-blue);
+}
+
+.battle-card-metal.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.battle-card-avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+}
+
+.battle-card-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #ffc107;
+  box-shadow: 0 3px 10px rgba(13, 110, 253, 0.25);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.battle-card-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.battle-card-avatar.empty {
+  background: #f8f9fa;
+  color: var(--primary-blue);
+  border: 2px dashed var(--primary-blue);
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.battle-card-name {
+  font-size: 11px;
+  color: #495057;
+  font-weight: 700;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  text-align: center;
+}
+
+.battle-card-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 0 8px;
+}
+
+.battle-card-entry {
+  font-size: 15px;
+  font-weight: 800;
+  color: #000000;
+  margin-bottom: 2px;
+  letter-spacing: -0.2px;
+}
+
+.battle-card-vs-img {
+  height: 26px;
+  width: auto;
+  opacity: 0.95;
+}
+
+@media (max-width: 390px) {
+  .battle-card-metal {
+    padding: 8px 10px;
+    min-height: 58px;
+  }
+  .battle-card-avatar {
+    width: 34px;
+    height: 34px;
+  }
+  .battle-card-entry {
+    font-size: 13px;
+  }
+  .battle-card-vs-img {
+    height: 22px;
+  }
+}

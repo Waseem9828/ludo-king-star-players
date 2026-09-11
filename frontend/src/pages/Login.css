@@ -1,0 +1,210 @@
+/* Login Page Layout */
+.login-page {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: #ffffff;
+}
+
+/* 1. Top Bonus Banner in its own container */
+.login-bonus-container {
+  background: #fef9c3;
+  border: 1px solid #fde047;
+  border-radius: 6px;
+  padding: 14px 18px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #854d0e;
+  letter-spacing: 0.1px;
+  box-shadow: 0 2px 8px rgba(253, 224, 71, 0.2);
+}
+
+/* 2. Login Form in its own separate card container */
+.login-card-container {
+  background: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Card Title Row */
+.login-card-title {
+  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #111827;
+  padding: 14px 20px;
+  border-bottom: 1px solid #e5e7eb;
+  letter-spacing: 0.1px;
+  background: #f8f9fa;
+}
+
+/* ── Fields ── */
+.login-field {
+  padding: 16px 20px 0;
+}
+
+.login-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+/* Phone row: icon box + input */
+.login-phone-row {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.login-phone-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: #f3f4f6;
+  border-right: 1px solid #d1d5db;
+  color: #374151;
+  flex-shrink: 0;
+}
+
+.login-phone-input {
+  flex: 1;
+  height: 44px;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  padding: 0 12px;
+  color: #111827;
+  background: transparent;
+  font-family: inherit;
+}
+
+.login-phone-input::placeholder {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+/* ── Legal Terms ── */
+.login-legal {
+  font-size: 12.5px;
+  color: #6b7280;
+  text-align: center;
+  padding: 12px 20px 0;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.login-legal-link {
+  color: #2563eb;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+/* ── GET OTP / Primary button ── */
+.login-otp-btn {
+  display: block;
+  width: calc(100% - 40px);
+  margin: 16px 20px;
+  padding: 14px;
+  background: #1a1040;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  cursor: pointer;
+  text-align: center;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.login-otp-btn:hover:not(:disabled) {
+  background: #2d1b6e;
+}
+
+.login-otp-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ── Register / bottom link ── */
+.login-register-text {
+  text-align: center;
+  font-size: 13.5px;
+  color: #374151;
+  padding: 0 20px 18px;
+  margin: 0;
+}
+
+.login-register-link {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.login-register-link:hover {
+  text-decoration: underline;
+}
+
+/* Verifying status text */
+.login-verifying-text {
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d4ed8;
+  padding: 8px 20px 0;
+  margin: 0;
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+
+/* ── Referral Badge ── */
+.login-referral-badge {
+  margin: 12px 20px 0;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border: 1px solid #10b981;
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: #065f46;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ── OTP step hint ── */
+.login-otp-hint {
+  text-align: center;
+  font-size: 13.5px;
+  color: #6b7280;
+  padding: 14px 20px 0;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Shared link button style */
+.login-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #2563eb;
+  font-weight: 700;
+  font-size: inherit;
+  cursor: pointer;
+}

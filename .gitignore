@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+.env.local
+.claude/
+backend/.env
+frontend/.env
+.DS_Store
+
+.vercel

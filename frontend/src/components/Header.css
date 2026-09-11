@@ -1,0 +1,177 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: calc(58px + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-left: max(12px, env(safe-area-inset-left, 0px));
+  padding-right: max(12px, env(safe-area-inset-right, 0px));
+  background: #ffffff;
+  border-bottom: 1px solid #dee2e6;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-header__left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.app-header__menu {
+  color: var(--primary-blue);
+  background: rgba(13, 110, 253, 0.08);
+  border-radius: 12px;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(13, 110, 253, 0.15);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-header__menu:hover {
+  background: rgba(13, 110, 253, 0.15);
+  transform: translateY(-1px);
+}
+
+.app-header__brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.app-header__logo-img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.app-header__right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex: 1;
+}
+
+.app-header__wallet-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  text-decoration: none;
+  box-shadow: 0 3px 10px rgba(22, 163, 74, 0.35);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.app-header__wallet-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 14px rgba(22, 163, 74, 0.5);
+}
+
+.app-header__bell-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(13, 110, 253, 0.08);
+  border: 1px solid rgba(13, 110, 253, 0.15);
+  color: var(--primary-blue);
+  text-decoration: none;
+  position: relative;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.app-header__bell-btn:hover {
+  background: rgba(13, 110, 253, 0.15);
+  transform: scale(1.05);
+}
+
+.header-bell-badge {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  background: #dc3545;
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  border: 2px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(220, 53, 69, 0.4);
+}
+
+/* Download button (guest) — square, logo-size */
+.header-download-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 6px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  text-decoration: none;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  overflow: hidden;
+  padding: 2px;
+}
+
+.header-download-btn:hover {
+  background: #e2e8f0;
+  transform: scale(1.05);
+}
+
+.header-download-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Rules button (guest) — square with 6px corners, black text */
+.header-rules-btn {
+  padding: 6px 12px;
+  height: 38px;
+  background: #fef9c3;
+  color: #000000;
+  border: 1px solid #facc15;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.header-rules-btn:hover {
+  background: #fde047;
+  transform: translateY(-1px);
+}

@@ -1,0 +1,98 @@
+.ptr-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Pull-to-Refresh Top Banner */
+.ptr-banner {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  background: linear-gradient(180deg, rgba(10, 81, 225, 0.12) 0%, rgba(255, 255, 255, 0) 100%);
+  transition: height 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.27);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.ptr-banner--pulling {
+  transition: none;
+}
+
+.ptr-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(10, 81, 225, 0.3);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 8px 20px rgba(10, 81, 225, 0.3);
+  transition: transform 0.15s ease-out, opacity 0.15s ease-out;
+}
+
+.ptr-loader-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ptr-icon-ring {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(10, 81, 225, 0.15);
+  color: var(--primary-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s linear, background-color 0.2s ease, color 0.2s ease;
+}
+
+.ptr-icon-ring--ready {
+  background: var(--primary-blue);
+  color: #ffffff;
+  box-shadow: 0 0 12px rgba(10, 81, 225, 0.6);
+}
+
+.ptr-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+/* Spinner for Refreshing State */
+.ptr-spinner {
+  width: 22px;
+  height: 22px;
+  border: 2.5px solid rgba(10, 81, 225, 0.2);
+  border-top-color: var(--primary-blue);
+  border-right-color: var(--primary-blue);
+  border-radius: 50%;
+  animation: ptr-spin 0.75s linear infinite;
+}
+
+@keyframes ptr-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.ptr-body {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+}
+
