@@ -519,12 +519,11 @@ export default function Wallet() {
         <Loading label="Loading wallet..." />
       ) : (
         <div className="wallet-card-container">
-          <div className="account-ui-card">
+          <div className="account-ui-card wallet-balance-card">
             <div className="account-ui-header">Deposit Chips</div>
-            <div className="account-ui-body">
-              <div className="account-ui-field" style={{ marginBottom: "8px" }}>
-                <span className="account-ui-label">Chips</span>
-                <div className="account-ui-input" style={{ fontSize: "1.1rem", fontWeight: "800", textAlign: "center" }}>
+            <div className="account-ui-body wallet-balance-body">
+              <div className="account-ui-field wallet-balance-field">
+                <div className="account-ui-input wallet-balance-val">
                   {wallet ? formatCoins(wallet.depositCoins) : "0"}
                 </div>
               </div>
@@ -532,12 +531,11 @@ export default function Wallet() {
             </div>
           </div>
 
-          <div className="account-ui-card">
+          <div className="account-ui-card wallet-balance-card">
             <div className="account-ui-header">Winning Chips</div>
-            <div className="account-ui-body">
-              <div className="account-ui-field" style={{ marginBottom: "8px" }}>
-                <span className="account-ui-label">Chips</span>
-                <div className="account-ui-input" style={{ fontSize: "1.1rem", fontWeight: "800", textAlign: "center" }}>
+            <div className="account-ui-body wallet-balance-body">
+              <div className="account-ui-field wallet-balance-field">
+                <div className="account-ui-input wallet-balance-val">
                   {wallet ? formatCoins(wallet.winningCoins) : "0"}
                 </div>
               </div>

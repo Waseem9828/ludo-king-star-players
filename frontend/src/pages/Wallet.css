@@ -28,6 +28,31 @@
   width: 100%;
 }
 
+.wallet-balance-card {
+  min-height: 145px;
+  display: flex;
+  flex-direction: column;
+}
+
+.wallet-balance-body {
+  padding: 16px 14px !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.wallet-balance-field {
+  margin-bottom: 12px !important;
+}
+
+.wallet-balance-val {
+  font-size: 1.25rem !important;
+  font-weight: 900 !important;
+  text-align: center;
+  padding: 10px 12px !important;
+}
+
 .wallet-card {
   background: var(--surface);
   border: 1px solid var(--border);
