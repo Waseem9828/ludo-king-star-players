@@ -1,19 +1,16 @@
 import mongoose from "mongoose";
 import dns from "node:dns";
 
-// Ensure fast IPv4 resolution everywhere (fixes Vercel AWS Lambda IPv6 Atlas lookup timeouts)
-try {
-  if (dns.setDefaultResultOrder) {
-    dns.setDefaultResultOrder("ipv4first");
-  }
-} catch (e) {
-  // Ignore if unsupported in environment
-}
-
+// Guard DNS adjustments for non-Vercel environments to avoid interfering with AWS Lambda SRV resolution
 if (!process.env.VERCEL) {
   try {
+    if (dns.setDefaultResultOrder) {
+      dns.setDefaultResultOrder("ipv4first");
+    }
     dns.setServers(["8.8.8.8", "1.1.1.1", "8.8.4.4"]);
-  } catch (e) {}
+  } catch (e) {
+    // Ignore if unsupported in environment
+  }
 }
 
 // Enable Mongoose query buffering so cold-start queries wait for connection
@@ -50,14 +47,17 @@ export async function connectDB() {
 
   const uri = process.env.MONGO_URI || process.env.MONGODB_URI;
   if (!uri) {
-    console.warn("MONGO_URI is not set in environment variables.");
-    return null;
+    const errorMsg = "MONGO_URI is missing in Vercel Environment Variables. Please set MONGO_URI in Vercel Project Settings.";
+    console.error(`⚠️  ${errorMsg}`);
+    const err = new Error(errorMsg);
+    err.name = "MongoServerSelectionError";
+    throw err;
   }
 
   if (!cached.promise) {
     const isServerless = Boolean(process.env.VERCEL);
     const options = {
-      serverSelectionTimeoutMS: 15000, // 15s allowance for TLS handshake & Atlas DNS
+      serverSelectionTimeoutMS: isServerless ? 10000 : 15000,
       connectTimeoutMS: 15000,
       socketTimeoutMS: 45000,
       maxPoolSize: isServerless ? 10 : 50,
@@ -88,6 +88,7 @@ export async function connectDB() {
     throw err;
   }
 }
+
 
 
 

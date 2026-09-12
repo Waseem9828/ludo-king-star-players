@@ -91,6 +91,8 @@ app.use("/api", apiLimiter);
 app.get("/api/health", async (req, res) => {
   let dbState = mongoose.connection.readyState;
   let dbError = null;
+  const hasMongoUri = Boolean(process.env.MONGO_URI || process.env.MONGODB_URI);
+
   if (dbState !== 1) {
     try {
       await connectDB();
@@ -100,12 +102,21 @@ app.get("/api/health", async (req, res) => {
     }
   }
 
+  let actionRequired = "None (Database Connected)";
+  if (!hasMongoUri) {
+    actionRequired = "Add MONGO_URI in Vercel Project Settings -> Environment Variables and redeploy.";
+  } else if (dbState !== 1) {
+    actionRequired = "Add 0.0.0.0/0 to MongoDB Atlas IP Whitelist (Network Access) to allow Vercel cloud serverless IPs.";
+  }
+
   res.json({
     status: dbState === 1 ? "ok" : "degraded",
     dbReadyState: dbState,
     dbStateLabel: { 0: "Disconnected", 1: "Connected", 2: "Connecting", 3: "Disconnecting" }[dbState] || "Unknown",
-    hasMongoUri: Boolean(process.env.MONGO_URI || process.env.MONGODB_URI),
+    hasMongoUri,
+    isVercel: Boolean(process.env.VERCEL),
     dbError,
+    actionRequired,
   });
 });
 
@@ -120,22 +131,14 @@ app.get("/api/version", (req, res) => {
 
 // DB Connection Guard Middleware: Ensures MongoDB connection is ready for Serverless & long-running instances.
 app.use(async (req, res, next) => {
-  if (req.path === "/api/health" || req.path === "/health") return next();
+  if (req.path === "/api/health" || req.path === "/health" || req.path === "/api/version") return next();
 
   if (mongoose.connection.readyState !== 1) {
     try {
       await connectDB();
     } catch (err) {
-      console.error("DB connection attempt in middleware:", err.message);
-      // Wait briefly for background connection to transition readyState
-      try {
-        await new Promise((r) => setTimeout(r, 600));
-        if (mongoose.connection.readyState !== 1) {
-          await connectDB();
-        }
-      } catch (retryErr) {
-        console.error("DB retry attempt error:", retryErr.message);
-      }
+      console.error("DB connection attempt in middleware failed:", err.message);
+      return next(err);
     }
   }
 

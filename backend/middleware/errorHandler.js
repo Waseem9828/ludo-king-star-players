@@ -20,8 +20,14 @@ export function errorHandler(err, req, res, next) {
     connectDB().catch(() => {});
     const detail = err.message || "Database connection failure";
     res.setHeader("X-DB-Error", detail.slice(0, 200));
+
+    let userFriendlyMsg = `Database unavailable (${detail}). Please check MongoDB Atlas IP Whitelist (0.0.0.0/0) & MONGO_URI in Vercel settings.`;
+    if (detail.includes("MONGO_URI is missing")) {
+      userFriendlyMsg = "Database unavailable: MONGO_URI is not set in Vercel Environment Variables. Please add MONGO_URI in Vercel Project Settings and redeploy.";
+    }
+
     return res.status(503).json({
-      message: `Database unavailable (${detail}). Please check MongoDB Atlas IP Whitelist (0.0.0.0/0) & MONGO_URI.`,
+      message: userFriendlyMsg,
       error: detail,
     });
   }
