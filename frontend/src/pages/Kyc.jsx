@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import useSWR from "swr";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext.jsx";
@@ -34,21 +34,16 @@ export default function Kyc() {
   const [showFullAadhaar, setShowFullAadhaar] = useState(false);
   
   const [submitting, setSubmitting] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const lastTriedOtpRef = useRef("");
 
-  // Auto-submit OTP when 6 digits entered
-  useEffect(() => {
-    if (step === "verify" && otp.length === 6 && !submitting) {
-      handleVerifyOtp({ preventDefault: () => {} });
+  const handleOtpChange = (val) => {
+    const clean = val.replace(/\D/g, "").slice(0, 6);
+    setOtp(clean);
+    if (clean !== lastTriedOtpRef.current) {
+      setOtpError("");
     }
-  }, [otp, step, submitting]);
-
-  const load = () => {
-    mutate();
   };
-
-  if (initializing) {
-    return <Loading label="Loading KYC details..." />;
-  }
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -60,10 +55,13 @@ export default function Kyc() {
     }
 
     setSubmitting(true);
+    setOtpError("");
+    lastTriedOtpRef.current = "";
     try {
       const result = await sendAadhaarOtp(token, { aadhaarNumber: cleanedAadhaar });
       setRequestId(result.request_id);
       setStep("verify");
+      setOtp("");
       toast.success("OTP sent to Aadhaar mobile!");
     } catch (err) {
       toast.error(friendlyError(err, "Could not send OTP."));
@@ -73,35 +71,56 @@ export default function Kyc() {
   };
 
   const handleVerifyOtp = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
 
-    if (otp.length !== 6) {
+    const cleanOtp = otp.trim();
+    if (cleanOtp.length !== 6) {
       toast.error("Enter 6-digit OTP.");
       return;
     }
 
+    if (submitting) return;
+
     setSubmitting(true);
+    setOtpError("");
     try {
-      await verifyAadhaarOtp(token, { aadhaarNumber, requestId, otp });
+      await verifyAadhaarOtp(token, { aadhaarNumber, requestId, otp: cleanOtp });
       mutate();
       toast.success("Aadhaar verified!");
       setStep("send");
       setAadhaarNumber("");
       setOtp("");
       setRequestId("");
+      lastTriedOtpRef.current = "";
     } catch (err) {
-      toast.error(friendlyError(err, "Invalid OTP or verification failed."));
+      lastTriedOtpRef.current = cleanOtp;
+      const errMsg = friendlyError(err, "Invalid OTP or verification failed.");
+      setOtpError(errMsg);
+      toast.error(errMsg);
     } finally {
       setSubmitting(false);
     }
   };
 
-  const formatAadhaarDisplay = (num) => {
-    if (!num) return "—";
-    if (showFullAadhaar) {
-      return `${num.slice(0, 4)} ${num.slice(4, 8)} ${num.slice(8, 12)}`;
+  // Auto-submit OTP when 6 digits entered — ONLY if this exact OTP has not already failed!
+  useEffect(() => {
+    if (step === "verify" && otp.length === 6 && otp !== lastTriedOtpRef.current && !submitting) {
+      handleVerifyOtp();
     }
-    return `XXXX XXXX ${num.slice(-4)}`;
+  }, [otp, step, submitting]);
+
+  const load = () => {
+    mutate();
+  };
+
+  if (initializing) {
+    return <Loading label="Loading KYC details..." />;
+  }
+
+  const clearOtp = () => {
+    setOtp("");
+    setOtpError("");
+    lastTriedOtpRef.current = "";
   };
 
   return (
@@ -195,15 +214,29 @@ export default function Kyc() {
                       maxLength={6}
                       placeholder="6-digit OTP"
                       value={otp}
-                      onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      onChange={(e) => handleOtpChange(e.target.value)}
                       disabled={submitting}
+                      autoFocus
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-primary btn-block" disabled={submitting}>
+                  {otpError && (
+                    <div style={{ background: "#fef2f2", border: "1px solid #fca5a5", color: "#991b1b", padding: "10px 14px", borderRadius: "10px", fontSize: "13px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
+                      <span>⚠️ {otpError}</span>
+                      <button
+                        type="button"
+                        style={{ background: "#ef4444", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer", whiteSpace: "nowrap" }}
+                        onClick={clearOtp}
+                      >
+                        Clear OTP
+                      </button>
+                    </div>
+                  )}
+
+                  <button type="submit" className="btn btn-primary btn-block" disabled={submitting || otp.length !== 6}>
                     {submitting ? "Verifying OTP..." : "Verify Aadhaar"}
                   </button>
-                  <button type="button" className="btn btn-ghost btn-block" disabled={submitting} onClick={() => setStep("send")}>
+                  <button type="button" className="btn btn-ghost btn-block" disabled={submitting} onClick={() => { setStep("send"); clearOtp(); }}>
                     Change Aadhaar Number
                   </button>
                 </form>

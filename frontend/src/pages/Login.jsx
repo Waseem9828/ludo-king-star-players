@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext.jsx";
 import OtpInput from "../components/OtpInput.jsx";
@@ -29,6 +29,8 @@ export default function Login() {
   const [sendingOtp, setSendingOtp] = useState(false);
   const [verifyingOtp, setVerifyingOtp] = useState(false);
   const [resending, setResending] = useState(false);
+  const [otpError, setOtpError] = useState("");
+  const lastTriedOtpRef = useRef("");
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -49,27 +51,41 @@ export default function Login() {
     return () => clearInterval(timer);
   }, [resendCooldown]);
 
+  const handleOtpChange = (val) => {
+    const clean = val.replace(/\D/g, "").slice(0, 6);
+    setOtp(clean);
+    if (clean !== lastTriedOtpRef.current) {
+      setOtpError("");
+    }
+  };
+
   const doVerify = useCallback(async (otpValue) => {
-    if (otpValue.length !== 6 || verifyingOtp) return;
+    const cleanOtp = (otpValue || otp).trim();
+    if (cleanOtp.length !== 6 || verifyingOtp) return;
+
     setVerifyingOtp(true);
+    setOtpError("");
     try {
-      const res = await verifyAuthOtp({ phone: otpPhone, otp: otpValue, referralCode });
+      const res = await verifyAuthOtp({ phone: otpPhone, otp: cleanOtp, referralCode });
       sessionStorage.removeItem(REF_STORAGE_KEY);
       toast.success(res.isNewUser ? "Account created! Welcome 👋" : "Login successful!");
       navigate("/");
     } catch (err) {
-      toast.error(friendlyError(err, "Invalid OTP."));
+      lastTriedOtpRef.current = cleanOtp;
+      const errMsg = friendlyError(err, "Invalid OTP.");
+      setOtpError(errMsg);
+      toast.error(errMsg);
     } finally {
       setVerifyingOtp(false);
     }
-  }, [verifyingOtp, otpPhone, referralCode, verifyAuthOtp, navigate]);
+  }, [otp, verifyingOtp, otpPhone, referralCode, verifyAuthOtp, navigate]);
 
-  // Auto-verify when all 6 digits entered
+  // Auto-verify when 6 digits entered — ONLY if this exact OTP has not already failed!
   useEffect(() => {
-    if (step === "otp" && otp.length === 6) {
+    if (step === "otp" && otp.length === 6 && otp !== lastTriedOtpRef.current && !verifyingOtp) {
       doVerify(otp);
     }
-  }, [otp, step, doVerify]);
+  }, [otp, step, verifyingOtp, doVerify]);
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -82,6 +98,8 @@ export default function Login() {
       const result = await sendAuthOtp({ phone, referralCode });
       setOtpPhone(result.phone || phone);
       setOtp("");
+      setOtpError("");
+      lastTriedOtpRef.current = "";
       setStep("otp");
       toast.success("OTP sent to mobile!");
       setResendCooldown(RESEND_COOLDOWN_SECONDS);
@@ -95,9 +113,12 @@ export default function Login() {
   const handleResendOtp = async () => {
     if (resendCooldown > 0 || resending) return;
     setResending(true);
+    setOtpError("");
     try {
       await sendAuthOtp({ phone: otpPhone, referralCode });
       toast.success("OTP resent!");
+      setOtp("");
+      lastTriedOtpRef.current = "";
       setResendCooldown(RESEND_COOLDOWN_SECONDS);
     } catch (err) {
       toast.error(friendlyError(err, "Failed to resend OTP."));
@@ -109,6 +130,14 @@ export default function Login() {
   const changeNumber = () => {
     setStep("form");
     setOtp("");
+    setOtpError("");
+    lastTriedOtpRef.current = "";
+  };
+
+  const clearOtp = () => {
+    setOtp("");
+    setOtpError("");
+    lastTriedOtpRef.current = "";
   };
 
   return (
@@ -190,16 +219,41 @@ export default function Login() {
               <OtpInput
                 length={6}
                 value={otp}
-                onChange={setOtp}
+                onChange={handleOtpChange}
                 disabled={verifyingOtp}
               />
             </div>
 
             {verifyingOtp && (
-              <p className="login-verifying-text">Verifying...</p>
+              <p className="login-verifying-text">Verifying OTP...</p>
             )}
 
-            <p className="login-register-text" style={{ marginTop: "16px" }}>
+            {otpError && (
+              <div style={{ marginTop: "12px", background: "#fef2f2", border: "1px solid #fca5a5", color: "#991b1b", padding: "10px 14px", borderRadius: "10px", fontSize: "13px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
+                <span>⚠️ {otpError}</span>
+                <button
+                  type="button"
+                  style={{ background: "#ef4444", color: "#fff", border: "none", padding: "4px 10px", borderRadius: "6px", fontSize: "11px", fontWeight: "bold", cursor: "pointer", whiteSpace: "nowrap" }}
+                  onClick={clearOtp}
+                >
+                  Clear OTP
+                </button>
+              </div>
+            )}
+
+            <div style={{ marginTop: "16px" }}>
+              <button
+                type="button"
+                className="login-otp-btn"
+                disabled={verifyingOtp || otp.length !== 6}
+                onClick={() => doVerify(otp)}
+                style={{ marginBottom: "12px" }}
+              >
+                {verifyingOtp ? "Verifying..." : "VERIFY OTP"}
+              </button>
+            </div>
+
+            <p className="login-register-text" style={{ marginTop: "8px" }}>
               {resendCooldown > 0 ? (
                 <span>Resend OTP in {resendCooldown}s</span>
               ) : (
