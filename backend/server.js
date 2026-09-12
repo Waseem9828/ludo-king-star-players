@@ -96,12 +96,22 @@ app.get("/api/health", (req, res) => {
 app.use(async (req, res, next) => {
   if (req.path === "/api/health" || req.path === "/health") return next();
 
-  try {
-    if (mongoose.connection.readyState !== 1) {
+  if (mongoose.connection.readyState !== 1) {
+    try {
       await connectDB();
+    } catch (err) {
+      console.error("DB connection error in request middleware:", err.message);
+      // Fast fallback retry after 500ms delay
+      try {
+        await new Promise((r) => setTimeout(r, 500));
+        await connectDB();
+      } catch (retryErr) {
+        console.error("DB connection retry failed:", retryErr.message);
+        if (req.path.startsWith("/api")) {
+          return res.status(503).json({ message: "Database service unavailable. Reconnecting..." });
+        }
+      }
     }
-  } catch (err) {
-    console.error("DB connection error in request middleware:", err.message);
   }
 
   return next();

@@ -1,3 +1,5 @@
+import { connectDB } from "../config/db.js";
+
 export function notFoundHandler(req, res, next) {
   res.status(404).json({ message: `Route not found: ${req.originalUrl}` });
 }
@@ -15,10 +17,10 @@ export function errorHandler(err, req, res, next) {
   console.error(err);
 
   // A DB-connectivity failure that slipped past the readyState check (e.g.
-  // the connection dropped mid-request) — safe, specific message, never the
-  // raw driver error (which can include connection strings/credentials).
+  // the connection dropped mid-request) — safe, specific message, trigger auto reconnect.
   if (DB_ERROR_NAMES.has(err.name)) {
-    return res.status(503).json({ message: "Database unavailable. Please try again in a moment." });
+    connectDB().catch(() => {});
+    return res.status(503).json({ message: "Database unavailable. Reconnecting..." });
   }
 
   // Mongoose validation or cast errors should be 400 Bad Request
