@@ -269,11 +269,14 @@ export default function AdminSiteSettings() {
           </div>
         </div>
 
-        {/* API INTEGRATIONS */}
+        {/* 💳 IMB DEPOSIT PAYMENT GATEWAY */}
         <div className="card stack" style={{ padding: "14px", gap: "12px" }}>
-          <h3 style={{ margin: 0, fontSize: "14px" }}>🔗 API Integrations</h3>
+          <h3 style={{ margin: 0, fontSize: "14px" }}>💳 IMB Deposit Payment Gateway (UPI / Add Cash)</h3>
+          <p className="text-muted" style={{ margin: 0, fontSize: "12px" }}>
+            Used for automatic wallet deposit payments via <code>https://api.imbpay.in/v2/create-order</code>
+          </p>
           <div className="field" style={{ marginBottom: 0 }}>
-            <label>IMB Deposit API Token</label>
+            <label>IMB Deposit User Token (<code>user_token</code>)</label>
             <input
               className="input"
               type="text"
@@ -282,6 +285,51 @@ export default function AdminSiteSettings() {
               placeholder="e.g. e9b..."
             />
           </div>
+        </div>
+
+        {/* 🪪 IMB AADHAAR KYC GATEWAY */}
+        <div className="card stack" style={{ padding: "14px", gap: "12px" }}>
+          <h3 style={{ margin: 0, fontSize: "14px" }}>🪪 IMB Aadhaar KYC Gateway (Identity Verification)</h3>
+          <p className="text-muted" style={{ margin: 0, fontSize: "12px" }}>
+            Used for Aadhaar OTP verification via <code>https://secure.imbpayment.in/api/v1/aadhaar/send-otp</code>
+          </p>
+          <div className="admin-form-grid">
+            <div className="field" style={{ marginBottom: 0 }}>
+              <label>KYC Merchant Code</label>
+              <input
+                className="input"
+                type="text"
+                value={settings.kycMerchantCode || ""}
+                onChange={(e) => setSettings({ ...settings, kycMerchantCode: e.target.value })}
+                placeholder="Merchant code"
+              />
+            </div>
+            <div className="field" style={{ marginBottom: 0 }}>
+              <label>KYC Client ID (<code>x-client-id</code>)</label>
+              <input
+                className="input"
+                type="text"
+                value={settings.kycClientId || ""}
+                onChange={(e) => setSettings({ ...settings, kycClientId: e.target.value })}
+                placeholder="Client ID"
+              />
+            </div>
+          </div>
+          <div className="field" style={{ marginBottom: 0 }}>
+            <label>KYC Client Secret (<code>x-client-secret</code>)</label>
+            <input
+              className="input"
+              type="password"
+              value={settings.kycClientSecret || ""}
+              onChange={(e) => setSettings({ ...settings, kycClientSecret: e.target.value })}
+              placeholder="Client Secret"
+            />
+          </div>
+        </div>
+
+        {/* 🎮 LUDOROOM API INTEGRATION */}
+        <div className="card stack" style={{ padding: "14px", gap: "12px" }}>
+          <h3 style={{ margin: 0, fontSize: "14px" }}>🎮 LudoRoom Auto-Result API</h3>
           <div className="field" style={{ marginBottom: 0 }}>
             <label>LudoRoom API Key (Result Auto-Settlement)</label>
             <div className="row" style={{ gap: "8px" }}>
@@ -322,38 +370,6 @@ export default function AdminSiteSettings() {
                 )}
               </div>
             )}
-          </div>
-          <div className="admin-form-grid">
-            <div className="field" style={{ marginBottom: 0 }}>
-              <label>KYC Merchant Code</label>
-              <input
-                className="input"
-                type="text"
-                value={settings.kycMerchantCode || ""}
-                onChange={(e) => setSettings({ ...settings, kycMerchantCode: e.target.value })}
-                placeholder="Merchant code"
-              />
-            </div>
-            <div className="field" style={{ marginBottom: 0 }}>
-              <label>KYC Client ID</label>
-              <input
-                className="input"
-                type="text"
-                value={settings.kycClientId || ""}
-                onChange={(e) => setSettings({ ...settings, kycClientId: e.target.value })}
-                placeholder="Client ID"
-              />
-            </div>
-          </div>
-          <div className="field" style={{ marginBottom: 0 }}>
-            <label>KYC Client Secret</label>
-            <input
-              className="input"
-              type="password"
-              value={settings.kycClientSecret || ""}
-              onChange={(e) => setSettings({ ...settings, kycClientSecret: e.target.value })}
-              placeholder="Client Secret"
-            />
           </div>
         </div>
 

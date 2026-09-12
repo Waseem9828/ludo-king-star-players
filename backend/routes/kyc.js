@@ -73,21 +73,11 @@ router.post(
 
     // Call IMB API to send OTP
     const settings = await getSiteSettings();
-    const clientId =
-      settings.kycClientId ||
-      settings.imbClientId ||
-      process.env.KYC_CLIENT_ID ||
-      process.env.IMB_CLIENT_ID ||
-      process.env.IMB_API_TOKEN;
-    const clientSecret =
-      settings.kycClientSecret ||
-      settings.imbApiToken ||
-      process.env.KYC_CLIENT_SECRET ||
-      process.env.IMB_CLIENT_SECRET ||
-      process.env.IMB_API_TOKEN;
+    const clientId = settings.kycClientId || process.env.KYC_CLIENT_ID || process.env.IMB_KYC_CLIENT_ID;
+    const clientSecret = settings.kycClientSecret || process.env.KYC_CLIENT_SECRET || process.env.IMB_KYC_CLIENT_SECRET;
 
     if (!clientId || !clientSecret) {
-      return res.status(500).json({ message: "KYC API is not configured. Please contact admin." });
+      return res.status(500).json({ message: "KYC API (Client ID / Secret) is not configured in Admin Settings." });
     }
 
     const fetchOptions = {
@@ -162,21 +152,11 @@ router.post(
 
     // Call IMB API to verify OTP
     const settings = await getSiteSettings();
-    const clientId =
-      settings.kycClientId ||
-      settings.imbClientId ||
-      process.env.KYC_CLIENT_ID ||
-      process.env.IMB_CLIENT_ID ||
-      process.env.IMB_API_TOKEN;
-    const clientSecret =
-      settings.kycClientSecret ||
-      settings.imbApiToken ||
-      process.env.KYC_CLIENT_SECRET ||
-      process.env.IMB_CLIENT_SECRET ||
-      process.env.IMB_API_TOKEN;
+    const clientId = settings.kycClientId || process.env.KYC_CLIENT_ID || process.env.IMB_KYC_CLIENT_ID;
+    const clientSecret = settings.kycClientSecret || process.env.KYC_CLIENT_SECRET || process.env.IMB_KYC_CLIENT_SECRET;
 
     if (!clientId || !clientSecret) {
-      return res.status(500).json({ message: "KYC API is not configured. Please contact admin." });
+      return res.status(500).json({ message: "KYC API (Client ID / Secret) is not configured in Admin Settings." });
     }
 
     const reqIdVal = requestId || "";
