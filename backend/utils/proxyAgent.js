@@ -28,6 +28,6 @@ export function getProxyUrl(siteSettings = null) {
     process.env.PROXY_URL ||
     process.env.HTTP_PROXY ||
     process.env.HTTPS_PROXY ||
-    "http://fixie:KMfuoyd8zM5C2jj@ventoux.usefixie.com:80"
+    "http://fixie:NE4sxSc6fqw2d66@ventoux.usefixie.com:80"
   );
 }

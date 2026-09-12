@@ -120,10 +120,13 @@ router.post(
     const requestId =
       data.request_id ||
       data.data?.request_id ||
+      data.meta?.request_id ||
       data.client_id ||
       data.data?.client_id ||
+      data.meta?.client_id ||
       data.reference_id ||
       data.data?.reference_id ||
+      data.meta?.reference_id ||
       data.ref_id ||
       data.data?.ref_id ||
       data.task_id ||
