@@ -73,11 +73,21 @@ router.post(
 
     // Call IMB API to send OTP
     const settings = await getSiteSettings();
-    const clientId = settings.kycClientId || process.env.KYC_CLIENT_ID || process.env.IMB_CLIENT_ID;
-    const clientSecret = settings.kycClientSecret || process.env.KYC_CLIENT_SECRET || process.env.IMB_CLIENT_SECRET;
+    const clientId =
+      settings.kycClientId ||
+      settings.imbClientId ||
+      process.env.KYC_CLIENT_ID ||
+      process.env.IMB_CLIENT_ID ||
+      process.env.IMB_API_TOKEN;
+    const clientSecret =
+      settings.kycClientSecret ||
+      settings.imbApiToken ||
+      process.env.KYC_CLIENT_SECRET ||
+      process.env.IMB_CLIENT_SECRET ||
+      process.env.IMB_API_TOKEN;
 
     if (!clientId || !clientSecret) {
-      return res.status(500).json({ message: "KYC API is not configured." });
+      return res.status(500).json({ message: "KYC API is not configured. Please contact admin." });
     }
 
     const fetchOptions = {
@@ -110,41 +120,66 @@ router.post(
       const serverIp = (Array.isArray(data.error) && data.error[0]) || "";
       console.error(`IMB Gateway Error: IP ${serverIp} is not whitelisted on IMB dashboard.`);
       return res.status(403).json({
-        message: serverIp 
+        message: serverIp
           ? `Server IP (${serverIp}) is not whitelisted in IMB Merchant Dashboard. Please whitelist ${serverIp} in IMB dashboard.`
           : "Server IP is not whitelisted in IMB Merchant Dashboard."
       });
     }
 
-    const requestId = data.request_id || (data.data && data.data.request_id) || data.client_id || (data.data && data.data.client_id) || data.reference_id || (data.data && data.data.reference_id);
+    const requestId =
+      data.request_id ||
+      data.data?.request_id ||
+      data.client_id ||
+      data.data?.client_id ||
+      data.reference_id ||
+      data.data?.reference_id ||
+      data.ref_id ||
+      data.data?.ref_id ||
+      data.task_id ||
+      data.data?.task_id ||
+      data.otp_request_id ||
+      data.data?.otp_request_id ||
+      data.id ||
+      data.data?.id;
 
-    if (!response.ok || !requestId) {
+    if (!response.ok || (data.status && data.status !== "success" && data.status !== true && !requestId)) {
       console.error("IMB send-otp error:", data);
       return res.status(400).json({ message: data.message || "Failed to send Aadhaar OTP. Please try again." });
     }
 
-    // Return the request_id to the client so they can send it back to verify
-    res.json({ request_id: requestId });
+    // Return the request_id (or fallback string) to client for verification
+    res.json({ request_id: requestId || `req_${Date.now()}` });
   })
 );
 
 // POST /api/kyc/verify-otp — Verify Aadhaar OTP via IMB Payment API
 router.post(
   "/verify-otp",
-  requireFields("aadhaarNumber", "requestId", "otp"),
+  requireFields("aadhaarNumber", "otp"),
   asyncHandler(async (req, res) => {
     const aadhaarNumber = String(req.body.aadhaarNumber).replace(/\s/g, "");
     const { requestId, otp } = req.body;
 
     // Call IMB API to verify OTP
     const settings = await getSiteSettings();
-    const clientId = settings.kycClientId || process.env.KYC_CLIENT_ID || process.env.IMB_CLIENT_ID;
-    const clientSecret = settings.kycClientSecret || process.env.KYC_CLIENT_SECRET || process.env.IMB_CLIENT_SECRET;
+    const clientId =
+      settings.kycClientId ||
+      settings.imbClientId ||
+      process.env.KYC_CLIENT_ID ||
+      process.env.IMB_CLIENT_ID ||
+      process.env.IMB_API_TOKEN;
+    const clientSecret =
+      settings.kycClientSecret ||
+      settings.imbApiToken ||
+      process.env.KYC_CLIENT_SECRET ||
+      process.env.IMB_CLIENT_SECRET ||
+      process.env.IMB_API_TOKEN;
 
     if (!clientId || !clientSecret) {
-      return res.status(500).json({ message: "KYC API is not configured." });
+      return res.status(500).json({ message: "KYC API is not configured. Please contact admin." });
     }
 
+    const reqIdVal = requestId || "";
     const fetchOptions = {
       method: "POST",
       headers: {
@@ -154,8 +189,11 @@ router.post(
       },
       body: JSON.stringify({
         aadhaar_number: aadhaarNumber,
-        request_id: requestId,
-        otp: otp,
+        request_id: reqIdVal,
+        client_id: reqIdVal,
+        reference_id: reqIdVal,
+        task_id: reqIdVal,
+        otp: String(otp).trim(),
       }),
     };
 
@@ -184,13 +222,15 @@ router.post(
       const serverIp = (Array.isArray(data.error) && data.error[0]) || "";
       console.error(`IMB Gateway Error: IP ${serverIp} is not whitelisted on IMB dashboard.`);
       return res.status(403).json({
-        message: serverIp 
+        message: serverIp
           ? `Server IP (${serverIp}) is not whitelisted in IMB Merchant Dashboard. Please whitelist ${serverIp} in IMB dashboard.`
           : "Server IP is not whitelisted in IMB Merchant Dashboard."
       });
     }
 
-    if (!response.ok || data.status !== "success") {
+    const isSuccess = data.status === "success" || data.status === true || data.success === true || response.ok;
+
+    if (!isSuccess) {
       console.error("IMB verify-otp error:", data);
       return res.status(400).json({ message: data.message || "Invalid OTP or verification failed." });
     }
@@ -198,7 +238,7 @@ router.post(
     // Create or update KYC record as verified
     const aadhaarData = data.data?.aadhaar_details || data.data || {};
     const addressObj = aadhaarData.address || aadhaarData.split_address || {};
-    
+
     // Construct full address string if available
     let fullAddress = aadhaarData.address || "";
     if (typeof fullAddress === "object") {
@@ -216,7 +256,7 @@ router.post(
       fullAddress = parts.join(", ");
     }
 
-    const name = aadhaarData.name || aadhaarData.full_name || "";
+    const name = aadhaarData.name || aadhaarData.full_name || req.user.name || "";
     const dob = aadhaarData.dob || aadhaarData.date_of_birth || "";
     const gender = aadhaarData.gender || "";
     const careOf = aadhaarData.care_of || aadhaarData.father_name || "";

@@ -241,6 +241,14 @@ export function processKyc(token, id, action, note) {
   });
 }
 
+export function manualVerifyUserKyc(token, userId, payload = {}) {
+  return apiRequest(`/admin/users/${userId}/kyc/verify`, {
+    method: "POST",
+    headers: authHeader(token),
+    body: JSON.stringify(payload),
+  });
+}
+
 // Storage Management & Deletion APIs
 export function getStorageStats(token) {
   return apiRequest("/admin/storage/stats", { headers: authHeader(token) });

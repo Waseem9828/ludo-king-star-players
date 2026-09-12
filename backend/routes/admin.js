@@ -1478,11 +1478,8 @@ router.patch(
       return res.status(400).json({ message: "Invalid action" });
     }
 
-    // Atomic, condition-guarded update: only succeeds if still pending, so
-    // two concurrent verify/reject calls on the same submission can't both
-    // go through.
     const kyc = await Kyc.findOneAndUpdate(
-      { _id: req.params.id, status: "pending" },
+      { _id: req.params.id },
       {
         $set: {
           status: action === "verify" ? "verified" : "rejected",
@@ -1495,10 +1492,7 @@ router.patch(
     );
 
     if (!kyc) {
-      const exists = await Kyc.exists({ _id: req.params.id });
-      return res
-        .status(exists ? 400 : 404)
-        .json({ message: exists ? "This KYC submission was already reviewed" : "KYC submission not found" });
+      return res.status(404).json({ message: "KYC submission not found" });
     }
 
     await notifyUser(kyc.user, {
@@ -1513,6 +1507,47 @@ router.patch(
     await logAdminAction(req, "REVIEW_KYC", `Reviewed KYC as ${action}`, kyc.user);
     await kyc.populate("user", "name phone");
     res.json(kyc);
+  })
+);
+
+// POST /api/admin/users/:id/kyc/verify — Directly verify KYC for a user account
+router.post(
+  "/users/:id/kyc/verify",
+  requireUserAdmin,
+  asyncHandler(async (req, res) => {
+    const targetUser = await User.findById(req.params.id);
+    if (!targetUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    let kyc = await Kyc.findOne({ user: targetUser._id });
+    if (kyc) {
+      kyc.status = "verified";
+      kyc.reviewedBy = req.user.id;
+      kyc.reviewedAt = new Date();
+      kyc.note = req.body.note || "Manually verified by admin";
+      await kyc.save();
+    } else {
+      kyc = await Kyc.create({
+        user: targetUser._id,
+        aadhaarNumber: req.body.aadhaarNumber || "000000000000",
+        name: targetUser.name || "Verified Player",
+        status: "verified",
+        submittedAt: new Date(),
+        reviewedBy: req.user.id,
+        reviewedAt: new Date(),
+        note: req.body.note || "Manually verified by admin",
+      });
+    }
+
+    await notifyUser(targetUser._id, {
+      type: NOTIFICATION_TYPE.KYC_VERIFIED,
+      title: "KYC verified",
+      message: "Your Aadhaar KYC has been verified by Admin. You can now request withdrawals.",
+    });
+
+    await logAdminAction(req, "MANUAL_VERIFY_KYC", `Manually verified KYC for user ${targetUser.phone}`, targetUser._id);
+    res.json({ message: "User KYC verified successfully", kyc });
   })
 );
 

@@ -1,7 +1,8 @@
 import { useState } from "react";
 import useSWR from "swr";
+import toast from "react-hot-toast";
 import { useAuth } from "../../contexts/AuthContext.jsx";
-import { processKyc, clearKycImage } from "../../lib/adminApi.js";
+import { processKyc, clearKycImage, manualVerifyUserKyc } from "../../lib/adminApi.js";
 import Loading from "../../components/Loading.jsx";
 import EmptyState from "../../components/EmptyState.jsx";
 import Modal from "../../components/Modal.jsx";
@@ -10,7 +11,7 @@ import { CheckCircleIcon, CrossCircleIcon, ClockIcon } from "../../components/Ic
 export default function AdminKyc() {
   const { token } = useAuth();
   const { data, error, mutate } = useSWR("/admin/kyc");
-  const { data: unsubmittedData } = useSWR("/admin/kyc/unsubmitted");
+  const { data: unsubmittedData, mutate: mutateUnsubmitted } = useSWR("/admin/kyc/unsubmitted");
   const loading = !data && !error;
   const kycList = data || [];
 
@@ -21,6 +22,52 @@ export default function AdminKyc() {
 
   // Lightbox / Image modal
   const [lightboxImage, setLightboxImage] = useState(null);
+
+  const handleVerifyKyc = async (item) => {
+    setActingId(item._id);
+    setActionError("");
+    try {
+      await processKyc(token, item._id, "verify", "Approved by Admin");
+      toast.success(`KYC verified for ${item.user?.name || "user"}`);
+      mutate();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setActingId(null);
+    }
+  };
+
+  const handleRejectKyc = async (item) => {
+    const reason = window.prompt("Reason for KYC rejection:", "Aadhaar details mismatch");
+    if (reason === null) return;
+    setActingId(item._id);
+    setActionError("");
+    try {
+      await processKyc(token, item._id, "reject", reason);
+      toast.success(`KYC rejected for ${item.user?.name || "user"}`);
+      mutate();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setActingId(null);
+    }
+  };
+
+  const handleManualVerifyUnsubmittedUser = async (user) => {
+    if (!window.confirm(`Manually approve & verify KYC for ${user.name || user.phone}?`)) return;
+    setActingId(user._id);
+    setActionError("");
+    try {
+      await manualVerifyUserKyc(token, user._id, { note: "Manually verified by admin" });
+      toast.success(`KYC manually verified for ${user.name || user.phone}!`);
+      mutate();
+      if (mutateUnsubmitted) mutateUnsubmitted();
+    } catch (err) {
+      toast.error(err.message);
+    } finally {
+      setActingId(null);
+    }
+  };
 
   const filtered = kycList.filter((item) => {
     const statusMatch =
@@ -92,16 +139,23 @@ export default function AdminKyc() {
              </div>
           ) : unsubmittedData.filter(u => `${u.name} ${u.phone}`.toLowerCase().includes(searchTerm.toLowerCase().trim())).map((user) => (
             <div key={user._id} className="card stack" style={{ gap: "14px", padding: "16px", background: "var(--surface)" }}>
-              <div className="row-between">
+              <div className="row-between" style={{ alignItems: "center" }}>
                 <div>
                   <h3 style={{ margin: 0, fontSize: "16px" }}>{user.name || "Unknown User"}</h3>
                   <p className="text-muted" style={{ margin: "4px 0 0", fontSize: "13px" }}>
                     📱 Phone: <strong>{user.phone || "—"}</strong>
                   </p>
                 </div>
-                <div style={{ textAlign: "right" }}>
+                <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "6px" }}>
                   <span style={{ padding: "3px 10px", borderRadius: "14px", fontSize: "11px", fontWeight: "bold", background: "#6b7280", color: "white" }}>NOT SUBMITTED</span>
-                  <p style={{ margin: "4px 0 0", fontSize: "12px", color: "var(--text-muted)" }}>Joined: {new Date(user.createdAt).toLocaleDateString()}</p>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    style={{ fontSize: "12px", padding: "4px 10px" }}
+                    disabled={actingId === user._id}
+                    onClick={() => handleManualVerifyUnsubmittedUser(user)}
+                  >
+                    ✅ Verify KYC
+                  </button>
                 </div>
               </div>
             </div>
@@ -142,11 +196,32 @@ export default function AdminKyc() {
                     </p>
                   </div>
 
-                  <div style={{ textAlign: "right" }}>
-                    <p style={{ margin: 0, fontSize: "12px", color: "var(--text-muted)" }}>Submitted</p>
-                    <p style={{ margin: "2px 0 0", fontSize: "13px", fontWeight: "600" }}>
+                  <div style={{ textAlign: "right", display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "6px" }}>
+                    <p style={{ margin: 0, fontSize: "12px", color: "var(--text-muted)" }}>
                       {new Date(item.submittedAt || item.createdAt).toLocaleString()}
                     </p>
+                    <div className="row" style={{ gap: "6px" }}>
+                      {!isVerified && (
+                        <button
+                          className="btn btn-primary btn-sm"
+                          style={{ fontSize: "11px", padding: "3px 8px" }}
+                          disabled={actingId === item._id}
+                          onClick={() => handleVerifyKyc(item)}
+                        >
+                          ✅ Approve
+                        </button>
+                      )}
+                      {!isRejected && (
+                        <button
+                          className="btn btn-danger btn-sm"
+                          style={{ fontSize: "11px", padding: "3px 8px" }}
+                          disabled={actingId === item._id}
+                          onClick={() => handleRejectKyc(item)}
+                        >
+                          ❌ Reject
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
 
