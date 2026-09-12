@@ -39,7 +39,7 @@
   pointer-events: none;
 }
 
-/* Main Content Area: Lowered Container */
+/* Main Content Area: Perfectly Centered Container */
 .pwa-splash-center {
   display: flex;
   flex-direction: column;
@@ -48,7 +48,7 @@
   text-align: center;
   width: 100%;
   max-width: 360px;
-  margin: auto 0 20px 0;
+  margin: auto auto;
   z-index: 2;
 }
 

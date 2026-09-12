@@ -10,6 +10,7 @@ import { useAuth } from "./contexts/AuthContext.jsx";
 import { PremiumToastCard } from "./components/PremiumToast.jsx";
 import { apiRequest } from "./lib/apiClient.js";
 import PwaSplashScreen from "./components/PwaSplashScreen.jsx";
+import PwaUpdateModal from "./components/PwaUpdateModal.jsx";
 
 // LAZY LOAD ALL ROUTES FOR CODE SPLITTING
 const Login = lazy(() => import("./pages/Login.jsx"));
@@ -79,6 +80,7 @@ export default function App() {
 
   return (
     <>
+      <PwaUpdateModal />
       {showSplash && <PwaSplashScreen onComplete={handleSplashComplete} />}
       <SWRConfig 
         value={{

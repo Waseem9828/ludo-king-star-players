@@ -1,19 +1,22 @@
 import mongoose from "mongoose";
 import dns from "node:dns";
 
-// Fast public DNS fallback for local development (skip on Vercel Serverless)
-if (!process.env.VERCEL) {
-  try {
-    if (dns.setDefaultResultOrder) {
-      dns.setDefaultResultOrder("ipv4first");
-    }
-    dns.setServers(["8.8.8.8", "1.1.1.1", "8.8.4.4"]);
-  } catch (e) {
-    // Ignore if unsupported in local environment
+// Ensure fast IPv4 resolution everywhere (fixes Vercel AWS Lambda IPv6 Atlas lookup timeouts)
+try {
+  if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder("ipv4first");
   }
+} catch (e) {
+  // Ignore if unsupported in environment
 }
 
-// Enable Mongoose query buffering so cold-start queries wait for connection instead of throwing
+if (!process.env.VERCEL) {
+  try {
+    dns.setServers(["8.8.8.8", "1.1.1.1", "8.8.4.4"]);
+  } catch (e) {}
+}
+
+// Enable Mongoose query buffering so cold-start queries wait for connection
 mongoose.set("bufferCommands", true);
 
 // Global connection cache across hot lambdas / module re-evaluations
@@ -47,42 +50,33 @@ export async function connectDB() {
 
   const uri = process.env.MONGO_URI || process.env.MONGODB_URI;
   if (!uri) {
-    console.warn("MONGO_URI is not set. Skipping database connection.");
+    console.warn("MONGO_URI is not set in environment variables.");
     return null;
   }
 
-  const isServerless = Boolean(process.env.VERCEL);
-
-  const options = {
-    serverSelectionTimeoutMS: 15000, // 15-second timeout to allow Atlas TLS handshake & DNS resolution on cold starts
-    connectTimeoutMS: 15000,          // 15-second connection timeout
-    socketTimeoutMS: 45000,          // 45s socket timeout to release dead sockets cleanly
-    maxPoolSize: isServerless ? 15 : 50, // Connection pool limit
-    minPoolSize: isServerless ? 0 : 2,    // Maintain small pool on dedicated servers, 0 on lambdas
-    maxIdleTimeMS: 120000,          // 2 minutes max idle before recycling socket
-    heartbeatFrequencyMS: 10000,    // Ping every 10 seconds to detect network drops fast
-    retryWrites: true,
-    retryReads: true,
-  };
-
   if (!cached.promise) {
-    cached.promise = (async () => {
-      let retries = 3;
-      while (retries > 0) {
-        try {
-          const conn = await mongoose.connect(uri, options);
-          return conn;
-        } catch (err) {
-          retries -= 1;
-          console.error(`MongoDB connection attempt failed (${retries} retries left):`, err.message);
-          if (retries === 0) {
-            cached.promise = null;
-            throw err;
-          }
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      }
-    })();
+    const isServerless = Boolean(process.env.VERCEL);
+    const options = {
+      serverSelectionTimeoutMS: 15000, // 15s allowance for TLS handshake & Atlas DNS
+      connectTimeoutMS: 15000,
+      socketTimeoutMS: 45000,
+      maxPoolSize: isServerless ? 10 : 50,
+      minPoolSize: 0,
+      maxIdleTimeMS: 120000,
+      heartbeatFrequencyMS: 10000,
+      retryWrites: true,
+      retryReads: true,
+    };
+
+    cached.promise = mongoose.connect(uri, options).then((m) => {
+      console.log("MongoDB connection established successfully.");
+      return m;
+    }).catch((err) => {
+      cached.promise = null;
+      cached.conn = null;
+      console.error("MongoDB connection failed:", err.message);
+      throw err;
+    });
   }
 
   try {
@@ -94,5 +88,6 @@ export async function connectDB() {
     throw err;
   }
 }
+
 
 

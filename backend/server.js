@@ -88,8 +88,34 @@ const apiLimiter = rateLimit({
 });
 app.use("/api", apiLimiter);
 
-app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", dbReadyState: mongoose.connection.readyState });
+app.get("/api/health", async (req, res) => {
+  let dbState = mongoose.connection.readyState;
+  let dbError = null;
+  if (dbState !== 1) {
+    try {
+      await connectDB();
+      dbState = mongoose.connection.readyState;
+    } catch (err) {
+      dbError = err.message;
+    }
+  }
+
+  res.json({
+    status: dbState === 1 ? "ok" : "degraded",
+    dbReadyState: dbState,
+    dbStateLabel: { 0: "Disconnected", 1: "Connected", 2: "Connecting", 3: "Disconnecting" }[dbState] || "Unknown",
+    hasMongoUri: Boolean(process.env.MONGO_URI || process.env.MONGODB_URI),
+    dbError,
+  });
+});
+
+const APP_VERSION = process.env.APP_VERSION || "1.3.1";
+
+app.get("/api/version", (req, res) => {
+  res.json({
+    version: APP_VERSION,
+    timestamp: Date.now(),
+  });
 });
 
 // DB Connection Guard Middleware: Ensures MongoDB connection is ready for Serverless & long-running instances.
@@ -100,16 +126,15 @@ app.use(async (req, res, next) => {
     try {
       await connectDB();
     } catch (err) {
-      console.error("DB connection error in request middleware:", err.message);
-      // Fast fallback retry after 500ms delay
+      console.error("DB connection attempt in middleware:", err.message);
+      // Wait briefly for background connection to transition readyState
       try {
-        await new Promise((r) => setTimeout(r, 500));
-        await connectDB();
-      } catch (retryErr) {
-        console.error("DB connection retry failed:", retryErr.message);
-        if (req.path.startsWith("/api")) {
-          return res.status(503).json({ message: "Database service unavailable. Reconnecting..." });
+        await new Promise((r) => setTimeout(r, 600));
+        if (mongoose.connection.readyState !== 1) {
+          await connectDB();
         }
+      } catch (retryErr) {
+        console.error("DB retry attempt error:", retryErr.message);
       }
     }
   }
