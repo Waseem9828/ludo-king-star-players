@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { SWRConfig } from "swr";
-import React, { Suspense, lazy } from "react";
+import React, { Suspense, lazy, useState, useEffect } from "react";
 import AppLayout from "./components/AppLayout.jsx";
 import ProtectedRoute from "./components/ProtectedRoute.jsx";
 import Loading from "./components/Loading.jsx";
@@ -9,6 +9,7 @@ import ErrorBoundary from "./components/ErrorBoundary.jsx";
 import { useAuth } from "./contexts/AuthContext.jsx";
 import { PremiumToastCard } from "./components/PremiumToast.jsx";
 import { apiRequest } from "./lib/apiClient.js";
+import PwaSplashScreen from "./components/PwaSplashScreen.jsx";
 
 // LAZY LOAD ALL ROUTES FOR CODE SPLITTING
 const Login = lazy(() => import("./pages/Login.jsx"));
@@ -54,18 +55,38 @@ const AdminLogin = lazy(() => import("./pages/admin/AdminLogin.jsx"));
 export default function App() {
   const { initializing, token } = useAuth();
 
+  const [showSplash, setShowSplash] = useState(() => {
+    // Show splash screen on installed PWA launch or initial app load
+    const isStandalone = typeof window !== "undefined" && (window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone);
+    const hasShownInSession = typeof sessionStorage !== "undefined" && sessionStorage.getItem("pwa_splash_shown");
+    return Boolean(isStandalone || !hasShownInSession);
+  });
+
+  useEffect(() => {
+    const handleReTrigger = () => setShowSplash(true);
+    window.addEventListener("app:show_splash", handleReTrigger);
+    return () => window.removeEventListener("app:show_splash", handleReTrigger);
+  }, []);
+
+  const handleSplashComplete = () => {
+    sessionStorage.setItem("pwa_splash_shown", "true");
+    setShowSplash(false);
+  };
+
   if (initializing) {
     return <Loading fullPage label="Loading..." />;
   }
 
   return (
-    <SWRConfig 
-      value={{
-        fetcher: (url) => apiRequest(url, { headers: token ? { Authorization: `Bearer ${token}` } : {} }),
-        keepPreviousData: true,
-        revalidateOnFocus: true,
-      }}
-    >
+    <>
+      {showSplash && <PwaSplashScreen onComplete={handleSplashComplete} />}
+      <SWRConfig 
+        value={{
+          fetcher: (url) => apiRequest(url, { headers: token ? { Authorization: `Bearer ${token}` } : {} }),
+          keepPreviousData: true,
+          revalidateOnFocus: true,
+        }}
+      >
       <Toaster 
         position="bottom-right" 
         reverseOrder={false}
@@ -142,6 +163,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </ErrorBoundary>
-    </SWRConfig>
+      </SWRConfig>
+    </>
   );
 }

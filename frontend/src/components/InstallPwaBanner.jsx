@@ -23,6 +23,8 @@ export default function InstallPwaBanner() {
     window.addEventListener("appinstalled", () => {
       setIsInstalled(true);
       setDeferredPrompt(null);
+      // Trigger PWA splash screen on successful installation
+      window.dispatchEvent(new Event("app:show_splash"));
     });
 
     return () => {
