@@ -77,9 +77,36 @@ router.post(
       fetchOptions.agent = agent;
     }
 
-    const response = await fetch("https://secure.imbpayment.in/api/v1/aadhaar/send-otp", fetchOptions);
+    let response;
+    try {
+      response = await fetch("https://secure.imbpayment.in/api/v1/aadhaar/send-otp", fetchOptions);
+    } catch (err) {
+      console.error("IMB send-otp connection error:", err.message);
+      return res.status(503).json({ message: "Unable to reach the Aadhaar KYC gateway. Please try again." });
+    }
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      console.error("IMB send-otp non-JSON response status:", response.status);
+      if (response.status === 407) {
+        return res.status(502).json({
+          message: "KYC Proxy Authentication Error (HTTP 407). Please update FIXIE_URL or remove it from .env."
+        });
+      }
+      return res.status(502).json({ message: "Aadhaar gateway returned an unexpected response. Please try again." });
+    }
+
+    if (data.error_code === "INVALID_IP" || (data.message && data.message.includes("IP is not whitelisted"))) {
+      const serverIp = (Array.isArray(data.error) && data.error[0]) || "";
+      console.error(`IMB Gateway Error: IP ${serverIp} is not whitelisted on IMB dashboard.`);
+      return res.status(403).json({
+        message: serverIp 
+          ? `Server IP (${serverIp}) is not whitelisted in IMB Merchant Dashboard. Please whitelist ${serverIp} in IMB dashboard.`
+          : "Server IP is not whitelisted in IMB Merchant Dashboard."
+      });
+    }
 
     const requestId = data.request_id || (data.data && data.data.request_id) || data.client_id || (data.data && data.data.client_id) || data.reference_id || (data.data && data.data.reference_id);
 
@@ -130,9 +157,36 @@ router.post(
       fetchOptions.agent = agent;
     }
 
-    const response = await fetch("https://secure.imbpayment.in/api/v1/aadhaar/verify-otp", fetchOptions);
+    let response;
+    try {
+      response = await fetch("https://secure.imbpayment.in/api/v1/aadhaar/verify-otp", fetchOptions);
+    } catch (err) {
+      console.error("IMB verify-otp connection error:", err.message);
+      return res.status(503).json({ message: "Unable to reach the Aadhaar KYC gateway. Please try again." });
+    }
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (e) {
+      console.error("IMB verify-otp non-JSON response status:", response.status);
+      if (response.status === 407) {
+        return res.status(502).json({
+          message: "KYC Proxy Authentication Error (HTTP 407). Please update FIXIE_URL or remove it from .env."
+        });
+      }
+      return res.status(502).json({ message: "Aadhaar gateway returned an unexpected response. Please try again." });
+    }
+
+    if (data.error_code === "INVALID_IP" || (data.message && data.message.includes("IP is not whitelisted"))) {
+      const serverIp = (Array.isArray(data.error) && data.error[0]) || "";
+      console.error(`IMB Gateway Error: IP ${serverIp} is not whitelisted on IMB dashboard.`);
+      return res.status(403).json({
+        message: serverIp 
+          ? `Server IP (${serverIp}) is not whitelisted in IMB Merchant Dashboard. Please whitelist ${serverIp} in IMB dashboard.`
+          : "Server IP is not whitelisted in IMB Merchant Dashboard."
+      });
+    }
 
     if (!response.ok || data.status !== "success") {
       console.error("IMB verify-otp error:", data);
