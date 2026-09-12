@@ -14,13 +14,16 @@ const DB_ERROR_NAMES = new Set([
 ]);
 
 export function errorHandler(err, req, res, next) {
-  console.error(err);
+  console.error("🔥 Global Error Handler caught exception:", err.name, err.message);
 
-  // A DB-connectivity failure that slipped past the readyState check (e.g.
-  // the connection dropped mid-request) — safe, specific message, trigger auto reconnect.
   if (DB_ERROR_NAMES.has(err.name)) {
     connectDB().catch(() => {});
-    return res.status(503).json({ message: "Database unavailable. Reconnecting..." });
+    const detail = err.message || "Database connection failure";
+    res.setHeader("X-DB-Error", detail.slice(0, 200));
+    return res.status(503).json({
+      message: `Database unavailable (${detail}). Please check MongoDB Atlas IP Whitelist (0.0.0.0/0) & MONGO_URI.`,
+      error: detail,
+    });
   }
 
   // Mongoose validation or cast errors should be 400 Bad Request
