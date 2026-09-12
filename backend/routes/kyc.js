@@ -30,6 +30,25 @@ router.get(
   })
 );
 
+async function fetchKycApi(url, options) {
+  const agent = getProxyAgent();
+  if (agent) {
+    try {
+      const res = await fetch(url, { ...options, agent });
+      if (res.status !== 407 && res.status !== 502 && res.status !== 503 && res.status !== 504) {
+        return res;
+      }
+      console.warn(`Fixie proxy returned HTTP ${res.status}. Falling back to direct connection...`);
+    } catch (err) {
+      console.warn("Proxy connection error. Retrying direct request:", err.message);
+    }
+  }
+
+  const directOptions = { ...options };
+  delete directOptions.agent;
+  return await fetch(url, directOptions);
+}
+
 // POST /api/kyc/send-otp — Request Aadhaar OTP via IMB Payment API
 router.post(
   "/send-otp",
@@ -71,15 +90,9 @@ router.post(
       body: JSON.stringify({ aadhaar_number: aadhaarNumber }),
     };
 
-    // Route through Static IP Proxy if configured (Fixie Proxy)
-    const agent = getProxyAgent();
-    if (agent) {
-      fetchOptions.agent = agent;
-    }
-
     let response;
     try {
-      response = await fetch("https://secure.imbpayment.in/api/v1/aadhaar/send-otp", fetchOptions);
+      response = await fetchKycApi("https://secure.imbpayment.in/api/v1/aadhaar/send-otp", fetchOptions);
     } catch (err) {
       console.error("IMB send-otp connection error:", err.message);
       return res.status(503).json({ message: "Unable to reach the Aadhaar KYC gateway. Please try again." });
@@ -90,11 +103,6 @@ router.post(
       data = await response.json();
     } catch (e) {
       console.error("IMB send-otp non-JSON response status:", response.status);
-      if (response.status === 407) {
-        return res.status(502).json({
-          message: "KYC Proxy Authentication Error (HTTP 407). Please update FIXIE_URL or remove it from .env."
-        });
-      }
       return res.status(502).json({ message: "Aadhaar gateway returned an unexpected response. Please try again." });
     }
 
@@ -151,15 +159,9 @@ router.post(
       }),
     };
 
-    // Route through Static IP Proxy if configured (Fixie Proxy)
-    const agent = getProxyAgent();
-    if (agent) {
-      fetchOptions.agent = agent;
-    }
-
     let response;
     try {
-      response = await fetch("https://secure.imbpayment.in/api/v1/aadhaar/verify-otp", fetchOptions);
+      response = await fetchKycApi("https://secure.imbpayment.in/api/v1/aadhaar/verify-otp", fetchOptions);
     } catch (err) {
       console.error("IMB verify-otp connection error:", err.message);
       return res.status(503).json({ message: "Unable to reach the Aadhaar KYC gateway. Please try again." });
