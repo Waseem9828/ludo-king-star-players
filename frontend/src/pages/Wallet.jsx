@@ -61,6 +61,23 @@ export default function Wallet() {
 
   useEffect(() => {
     if (!isAuthenticated) return;
+
+    // 1. Popup Window Return Guard: If payment opened in a secondary tab/popup window,
+    // pass the orderId back to the main window and close this duplicate tab!
+    if (window.opener && !window.opener.closed) {
+      const urlOrderId = searchParams.get("order_id") || searchParams.get("orderId") || searchParams.get("order_no");
+      if (urlOrderId) {
+        try {
+          window.opener.postMessage({ type: "PAYMENT_RETURN", orderId: urlOrderId }, window.location.origin);
+          window.opener.focus();
+          window.close();
+          return;
+        } catch (e) {
+          // Ignore postMessage error
+        }
+      }
+    }
+
     checkPendingOrder();
 
     const handleRefresh = () => {
@@ -68,10 +85,24 @@ export default function Wallet() {
       mutate("/kyc/me");
       mutate("/settings");
     };
+
+    // 2. Listen for return messages from payment popups
+    const handleMessage = (event) => {
+      if (event.origin !== window.location.origin) return;
+      if (event.data && event.data.type === "PAYMENT_RETURN" && event.data.orderId) {
+        localStorage.setItem(PENDING_ORDER_STORAGE_KEY, event.data.orderId);
+        checkPendingOrder();
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
     window.addEventListener("app:refresh", handleRefresh);
-    return () => window.removeEventListener("app:refresh", handleRefresh);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      window.removeEventListener("app:refresh", handleRefresh);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated]);
+  }, [isAuthenticated, searchParams]);
 
   useEffect(() => {
     if (!pendingOrder || pendingOrder.status !== "pending") return;
@@ -98,6 +129,7 @@ export default function Wallet() {
           localStorage.removeItem(PENDING_ORDER_STORAGE_KEY);
           refreshWallet();
           mutate("/wallet/history");
+          setActiveModal(null);
           if (urlOrderId) {
             navigate("/wallet", { replace: true });
           }
