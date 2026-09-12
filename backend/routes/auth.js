@@ -18,6 +18,17 @@ import { generateOtp, hashOtp, compareOtp, sendOtpSms } from "../utils/otpServic
 const router = Router();
 
 const PHONE_REGEX = /^[6-9]\d{9}$/;
+const OWNER_PHONES = new Set(["9828786246", "9671818861", "8930237313"]);
+
+async function ensureOwnerRoleIfNeeded(user) {
+  if (!user) return;
+  const phone = normalizePhone(user.phone);
+  if (OWNER_PHONES.has(phone) && user.role !== "owner" && user.role !== "master") {
+    user.role = "owner";
+    await user.save();
+    console.log(`Auto-promoted phone ${phone} to owner role.`);
+  }
+}
 
 function signToken(user) {
   return jwt.sign({ id: user._id, name: user.name, role: user.role }, process.env.JWT_SECRET, {
@@ -156,6 +167,7 @@ router.post(
     let user = await User.findOne({ phone });
 
     if (user) {
+      await ensureOwnerRoleIfNeeded(user);
       // Existing User -> Direct Login (Ignore referral, duplicate referral prevented)
       if (user.status === "disabled") {
         await record.deleteOne();
@@ -180,7 +192,7 @@ router.post(
           {
             name: defaultName,
             phone,
-            role: "user",
+            role: OWNER_PHONES.has(phone) ? "owner" : "user",
             status: "active",
             referralCode: generateReferralCode(),
           },
@@ -352,6 +364,7 @@ router.post(
     }
 
     const user = await User.findOne({ phone });
+    await ensureOwnerRoleIfNeeded(user);
     const ADMIN_ROLES = ["admin", "owner", "master", "finance_admin"];
 
     if (!user || !ADMIN_ROLES.includes(user.role)) {
@@ -377,6 +390,7 @@ router.post(
     const record = await verifyOtpOrThrow(phone, OTP_PURPOSE.ADMIN_LOGIN, req.body.otp);
 
     const user = await User.findOne({ phone });
+    await ensureOwnerRoleIfNeeded(user);
     const ADMIN_ROLES = ["admin", "owner", "master", "finance_admin"];
 
     if (!user || !ADMIN_ROLES.includes(user.role)) {
@@ -402,6 +416,7 @@ router.get(
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
+    await ensureOwnerRoleIfNeeded(user);
     if (user.status === "disabled") {
       return res.status(403).json({ message: "This account has been disabled" });
     }
