@@ -1,5 +1,19 @@
 import "dotenv/config";
+import dns from "node:dns";
 import express from "express";
+
+// Ensure fast public DNS resolution globally for MongoDB and external API endpoints (bypasses local ISP DNS blocks)
+try {
+  if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder("ipv4first");
+  }
+  if (!process.env.VERCEL) {
+    dns.setServers(["8.8.8.8", "1.1.1.1", "8.8.4.4"]);
+  }
+} catch (e) {
+  // Ignore if environment forbids setting custom DNS servers
+}
+
 import cors from "cors";
 import compression from "compression";
 import mongoose from "mongoose";

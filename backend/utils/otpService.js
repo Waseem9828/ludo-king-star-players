@@ -1,5 +1,18 @@
 import crypto from "node:crypto";
 import bcrypt from "bcryptjs";
+import dns from "node:dns";
+
+// Ensure fast public DNS resolution for SMS gateway endpoints (bypasses ISP DNS issues locally)
+try {
+  if (dns.setDefaultResultOrder) {
+    dns.setDefaultResultOrder("ipv4first");
+  }
+  if (!process.env.VERCEL) {
+    dns.setServers(["8.8.8.8", "1.1.1.1", "8.8.4.4"]);
+  }
+} catch (e) {
+  // Ignore if environment forbids setting custom DNS servers
+}
 
 // API-King OTP Send endpoint — exact URL, request body shape ({ number, otp,
 // route }) and auth (Authorization: <key>, no "Bearer" prefix) per their docs.
@@ -25,10 +38,11 @@ export function compareOtp(otp, otpHash) {
 export async function sendOtpSms(phone, otp) {
   const apiKey = process.env.API_KING_KEY;
   if (!apiKey) {
+    console.warn(`[DEV WARNING] API_KING_KEY not set. OTP for ${phone}: ${otp}`);
     throw Object.assign(new Error("SMS service is not configured. Please try again later."), { status: 500 });
   }
 
-  console.log(`[DEV] OTP for ${phone}: ${otp}`);
+  console.log(`[OTP SERVICE] Sending SMS to ${phone} with code: ${otp}`);
 
   let res;
   try {
@@ -39,6 +53,7 @@ export async function sendOtpSms(phone, otp) {
         Authorization: apiKey,
       },
       body: JSON.stringify({ number: phone, otp, route: "sms" }),
+      signal: AbortSignal.timeout(12000), // 12-second max timeout
     });
   } catch (err) {
     console.error("API-King request failed:", err.message);
@@ -55,4 +70,7 @@ export async function sendOtpSms(phone, otp) {
     console.error("API-King OTP send failed:", res.status, detail);
     throw Object.assign(new Error("Failed to send OTP. Please try again."), { status: 502 });
   }
+
+  const resJson = await res.json().catch(() => ({}));
+  console.log(`[SMS SUCCESS] Sent OTP to ${phone}:`, resJson);
 }
