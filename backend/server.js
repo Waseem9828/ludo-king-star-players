@@ -2,16 +2,16 @@ import "dotenv/config";
 import dns from "node:dns";
 import express from "express";
 
-// Ensure fast public DNS resolution globally for MongoDB and external API endpoints (bypasses local ISP DNS blocks)
-try {
-  if (dns.setDefaultResultOrder) {
-    dns.setDefaultResultOrder("ipv4first");
-  }
-  if (!process.env.VERCEL) {
+// Ensure fast public DNS resolution globally for local development (bypasses ISP DNS blocks)
+if (!process.env.VERCEL) {
+  try {
+    if (dns.setDefaultResultOrder) {
+      dns.setDefaultResultOrder("ipv4first");
+    }
     dns.setServers(["8.8.8.8", "1.1.1.1", "8.8.4.4"]);
+  } catch (e) {
+    // Ignore if environment forbids setting custom DNS servers
   }
-} catch (e) {
-  // Ignore if environment forbids setting custom DNS servers
 }
 
 import cors from "cors";
@@ -145,22 +145,24 @@ if (fs.existsSync(frontendDist)) {
 app.use(notFoundHandler);
 app.use(errorHandler);
 
-import http from "http";
-import { initSocket } from "./config/socket.js";
-
-const server = http.createServer(app);
-initSocket(server);
-
-const PORT = process.env.PORT || 5000;
-
-// Connect to MongoDB first before accepting HTTP traffic
+// Connect to MongoDB & initialize HTTP / Socket.io server locally (Skip on Vercel Serverless)
 if (!process.env.VERCEL) {
-  connectDB()
-    .then(() => console.log("Database connected successfully."))
-    .catch((err) => console.error("Initial DB connection warning:", err.message))
-    .finally(() => {
-      server.listen(PORT, "0.0.0.0", () => console.log(`Server running on port ${PORT}, bound to 0.0.0.0 (LAN & WebSocket accessible)`));
+  import("http").then(({ default: http }) => {
+    import("./config/socket.js").then(({ initSocket }) => {
+      const server = http.createServer(app);
+      initSocket(server);
+      const PORT = process.env.PORT || 5000;
+
+      connectDB()
+        .then(() => console.log("Database connected successfully."))
+        .catch((err) => console.error("Initial DB connection warning:", err.message))
+        .finally(() => {
+          server.listen(PORT, "0.0.0.0", () =>
+            console.log(`Server running on port ${PORT}, bound to 0.0.0.0 (LAN & WebSocket accessible)`)
+          );
+        });
     });
+  });
 }
 
 export default app;
