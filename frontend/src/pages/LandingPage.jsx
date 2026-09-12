@@ -20,31 +20,53 @@ export default function LandingPage() {
 
   return (
     <div className="landing-page">
-      {/* Dice GIF */}
-      <div className="landing-dice-wrapper">
-        <img
-          src="/dice_gif.gif"
-          alt="Dice rolling animation"
-          className="landing-dice-gif"
-        />
+      {/* Top App Branding Badge */}
+      <div className="landing-header">
+        <div className="landing-brand-logo">
+          <img src="/header.png" alt="App Logo" className="landing-logo-img" onError={(e) => { e.target.style.display = "none"; }} />
+          <span className="landing-brand-name">ludo King adda .com</span>
+        </div>
+        <span className="landing-live-badge">
+          <span className="landing-live-dot" /> 24/7 BATTLES
+        </span>
       </div>
 
-      {/* Disclaimer Text */}
-      <div className="landing-disclaimer">
-        <p>
-          This Game involves an element of financial risk and may be addictive.
-          Please Play responsibly and at your own risk.
+      {/* Hero Section: Animated Dice & Glow */}
+      <div className="landing-hero-section">
+        <div className="landing-dice-bg-glow" />
+        <div className="landing-dice-wrapper">
+          <img
+            src="/dice_gif.gif"
+            alt="Dice rolling animation"
+            className="landing-dice-gif"
+          />
+        </div>
+        <h2 className="landing-hero-title">1v1 Real Money Ludo Battles</h2>
+        <p className="landing-hero-subtitle">Play with real players & get instant UPI withdrawals 24/7</p>
+      </div>
+
+      {/* Disclaimer Card Container */}
+      <div className="landing-disclaimer-card">
+        <div className="landing-disclaimer-header">
+          <span>⚠️ RESPONSIBLE GAMING ADVISORY</span>
+        </div>
+        <p className="landing-disclaimer-text">
+          This Game involves an element of financial risk and may be addictive. Please play responsibly and at your own risk. Only 18+ allowed.
         </p>
       </div>
 
-      {/* CTA Row: PLAY NOW + WhatsApp Support */}
+      {/* CTA Bottom Action Row */}
       <div className="landing-cta-row">
         <button
           id="landing-play-now-btn"
           className="landing-play-btn"
           onClick={() => navigate("/login")}
         >
-          PLAY NOW
+          <span>PLAY NOW</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14" />
+            <path d="m12 5 7 7-7 7" />
+          </svg>
         </button>
 
         {whatsappNumber && (
@@ -59,8 +81,8 @@ export default function LandingPage() {
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
               alt="WhatsApp Support"
-              width="28"
-              height="28"
+              width="26"
+              height="26"
             />
           </a>
         )}
