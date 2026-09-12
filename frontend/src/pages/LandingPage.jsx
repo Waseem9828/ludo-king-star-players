@@ -20,29 +20,13 @@ export default function LandingPage() {
 
   return (
     <div className="landing-page">
-      {/* Top App Branding Badge */}
-      <div className="landing-header">
-        <div className="landing-brand-logo">
-          <img src="/header.png" alt="App Logo" className="landing-logo-img" onError={(e) => { e.target.style.display = "none"; }} />
-          <span className="landing-brand-name">ludo King adda .com</span>
-        </div>
-        <span className="landing-live-badge">
-          <span className="landing-live-dot" /> 24/7 BATTLES
-        </span>
-      </div>
-
-      {/* Hero Section: Animated Dice & Glow */}
-      <div className="landing-hero-section">
-        <div className="landing-dice-bg-glow" />
-        <div className="landing-dice-wrapper">
-          <img
-            src="/dice_gif.gif"
-            alt="Dice rolling animation"
-            className="landing-dice-gif"
-          />
-        </div>
-        <h2 className="landing-hero-title">1v1 Real Money Ludo Battles</h2>
-        <p className="landing-hero-subtitle">Play with real players & get instant UPI withdrawals 24/7</p>
+      {/* Hero Section: Big GIF Image Display */}
+      <div className="landing-big-gif-section">
+        <img
+          src="/dice_gif.gif"
+          alt="Ludo King Adda Gameplay"
+          className="landing-big-gif"
+        />
       </div>
 
       {/* Disclaimer Card Container */}
@@ -90,3 +74,4 @@ export default function LandingPage() {
     </div>
   );
 }
+
