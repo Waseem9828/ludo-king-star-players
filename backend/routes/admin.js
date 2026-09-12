@@ -49,10 +49,19 @@ const ROLE_WEIGHT = {
   user: 10,
 };
 
-function canTargetUser(actorRole, targetRole) {
+function canTargetUser(actorRole, targetRole, actorId, targetId) {
+  if (actorRole === "master") return true;
+  // An actor can ALWAYS modify/update their own account!
+  if (actorId && targetId && String(actorId) === String(targetId)) return true;
+
+  if (actorRole === "owner") {
+    // Owner can target users, admins, finance_admins, AND other owner accounts
+    const targetWeight = ROLE_WEIGHT[targetRole] || 0;
+    return targetWeight <= ROLE_WEIGHT["owner"];
+  }
+
   const actorWeight = ROLE_WEIGHT[actorRole] || 0;
   const targetWeight = ROLE_WEIGHT[targetRole] || 0;
-  if (actorRole === "master") return true;
   return actorWeight > targetWeight;
 }
 
@@ -398,7 +407,7 @@ router.patch(
     const targetUser = await User.findById(req.params.id);
     if (!targetUser) return res.status(404).json({ message: "User not found" });
 
-    if (!canTargetUser(req.user.role, targetUser.role)) {
+    if (!canTargetUser(req.user.role, targetUser.role, req.user.id, targetUser._id)) {
       return res.status(403).json({ message: "You do not have permission to modify this user account." });
     }
 
@@ -429,7 +438,7 @@ router.patch(
     const targetUser = await User.findById(req.params.id);
     if (!targetUser) return res.status(404).json({ message: "User not found" });
 
-    if (!canTargetUser(req.user.role, targetUser.role)) {
+    if (!canTargetUser(req.user.role, targetUser.role, req.user.id, targetUser._id)) {
       return res.status(403).json({ message: "You do not have permission to modify this user account." });
     }
 
@@ -522,7 +531,7 @@ router.patch(
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (!canTargetUser(req.user.role, targetUser.role)) {
+    if (!canTargetUser(req.user.role, targetUser.role, req.user.id, targetUser._id)) {
       return res.status(403).json({ message: "You do not have permission to modify this user account." });
     }
 
@@ -557,7 +566,7 @@ router.patch(
       return res.status(404).json({ message: "User not found" });
     }
 
-    if (!canTargetUser(req.user.role, targetUser.role)) {
+    if (!canTargetUser(req.user.role, targetUser.role, req.user.id, targetUser._id)) {
       return res.status(403).json({ message: "You do not have permission to modify this user account." });
     }
 
@@ -596,7 +605,7 @@ router.post(
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    if (!canTargetUser(req.user.role, user.role)) {
+    if (!canTargetUser(req.user.role, user.role, req.user.id, user._id)) {
       return res.status(403).json({ message: "You do not have permission to adjust wallet for this user account." });
     }
 
