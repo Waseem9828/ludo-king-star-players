@@ -57,15 +57,9 @@ function formatDate(iso) {
 }
 
 function EmptyTab({ tab }) {
-  const copy = {
-    game: { icon: "🕒", title: "No game history yet", description: "Battles you play will show up here." },
-    withdraw: { icon: "🏧", title: "No withdrawals yet", description: "Withdrawal requests will show up here." },
-    deposit: { icon: "➕", title: "No deposits yet", description: "Virtual coin top-ups will show up here." },
-    referral: { icon: "🎁", title: "No referral history yet", description: "Referral bonuses will show up here." },
-  }[tab];
   return (
-    <div className="card">
-      <EmptyState icon={copy.icon} title={copy.title} description={copy.description} />
+    <div className="card" style={{ padding: "0" }}>
+      <EmptyState type={tab} />
     </div>
   );
 }

@@ -271,7 +271,7 @@ export default function Referral() {
               <div className="ref-card-header">Your Referrals</div>
               <div className="ref-card-body">
                 {data.referrals.length === 0 ? (
-                  <EmptyState icon="🤝" title="No referrals yet" description="Invite friends to see them listed here." />
+                  <EmptyState type="referral" />
                 ) : (
                   <div className="ref-list">
                     {data.referrals.map((r, i) => (
