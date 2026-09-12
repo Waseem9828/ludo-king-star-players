@@ -31,7 +31,8 @@ router.get(
 );
 
 async function fetchKycApi(url, options) {
-  const agent = getProxyAgent();
+  const settings = await getSiteSettings();
+  const agent = getProxyAgent(settings);
   if (agent) {
     try {
       const res = await fetch(url, { ...options, agent });

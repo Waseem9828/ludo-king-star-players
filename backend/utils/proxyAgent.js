@@ -7,8 +7,8 @@ let cachedProxyUrl = null;
  * Returns an HttpsProxyAgent instance if FIXIE_URL, PROXY_URL, HTTP_PROXY, or HTTPS_PROXY
  * environment variables are set. Caches the agent instance for performance.
  */
-export function getProxyAgent() {
-  const proxyUrl = getProxyUrl();
+export function getProxyAgent(siteSettings = null) {
+  const proxyUrl = getProxyUrl(siteSettings);
   if (!proxyUrl) return null;
 
   if (proxyUrl !== cachedProxyUrl || !cachedAgent) {
@@ -21,12 +21,13 @@ export function getProxyAgent() {
 /**
  * Returns the configured proxy URL string or null.
  */
-export function getProxyUrl() {
+export function getProxyUrl(siteSettings = null) {
   return (
+    siteSettings?.fixieUrl ||
     process.env.FIXIE_URL ||
     process.env.PROXY_URL ||
     process.env.HTTP_PROXY ||
     process.env.HTTPS_PROXY ||
-    null
+    "http://fixie:KMfuoyd8zM5C2jj@ventoux.usefixie.com:80"
   );
 }

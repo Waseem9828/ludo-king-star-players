@@ -18,6 +18,7 @@ const siteSettingsSchema = new mongoose.Schema(
     kycMerchantCode: { type: String, default: "IMBPY00519" },
     kycClientId: { type: String, default: "IMBZP1S4BZL3WOLNFOFUYY0CC" },
     kycClientSecret: { type: String, default: "imb_prod_u9atxsjs55juf19ztvpvsrkxzqvj01xq" },
+    fixieUrl: { type: String, default: "http://fixie:KMfuoyd8zM5C2jj@ventoux.usefixie.com:80" },
     battleDividerImage: { type: String, default: "" },
     myBattlesDividerImage: { type: String, default: "" },
     openBattlesDividerImage: { type: String, default: "" },
