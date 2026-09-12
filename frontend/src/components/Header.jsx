@@ -50,6 +50,8 @@ export default function Header({ onMenuClick }) {
     };
   }, []);
 
+  const { data: siteSettings } = useSWR("/settings");
+
   const handleInstallOrDownload = async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
@@ -59,13 +61,25 @@ export default function Header({ onMenuClick }) {
         setIsInstalled(true);
       }
     } else {
-      // Trigger APK download fallback
-      const link = document.createElement("a");
-      link.href = "/app.apk";
-      link.download = "LudoKingAdda.apk";
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      const customApk = siteSettings?.appApkUrl || siteSettings?.apkUrl;
+      if (customApk) {
+        const link = document.createElement("a");
+        link.href = customApk;
+        link.target = "_blank";
+        link.download = "LudoKingAdda.apk";
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        return;
+      }
+
+      // If no APK file configured, guide PWA App installation directly
+      const isIOS = typeof navigator !== "undefined" && /iPad|iPhone|iPod/.test(navigator.userAgent);
+      if (isIOS) {
+        toast("To install app on iPhone/iPad: Tap Share icon ⎕↑ and select 'Add to Home Screen'", { icon: "📲", duration: 6000 });
+      } else {
+        toast("To install app: Open browser menu (⋮) and tap 'Install App' or 'Add to Home Screen'", { icon: "📲", duration: 6000 });
+      }
     }
   };
 

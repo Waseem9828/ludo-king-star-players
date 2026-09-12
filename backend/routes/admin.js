@@ -442,8 +442,8 @@ router.patch(
       return res.status(403).json({ message: "You do not have permission to modify this user account." });
     }
 
-    if (req.user.role !== "master" && (role === "master" || (role === "owner" && req.user.role !== "master"))) {
-      return res.status(403).json({ message: "You do not have permission to assign this role." });
+    if (req.user.role !== "master" && role === "master") {
+      return res.status(403).json({ message: "You do not have permission to assign the master role." });
     }
 
     targetUser.role = role;
